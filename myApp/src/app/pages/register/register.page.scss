@@ -1,0 +1,188 @@
+// Register page – light theme matching original design
+
+.register-content {
+  --background: #ffffff;
+}
+
+.auth-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 100px 28px 40px;
+  position: relative;
+}
+
+// ── Back Button ──
+.back-btn {
+  position: absolute;
+  top: 52px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid #ccc;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 22px;
+  color: #111;
+  line-height: 1;
+  transition: background 0.2s;
+  z-index: 10;
+  padding: 0 0 2px 0;
+
+  &:hover { background: #f5f5f5; }
+}
+
+.brand-section { margin-bottom: 28px; }
+
+.brand-name {
+  font-size: 32px; font-weight: 800; color: #111;
+  letter-spacing: -1px; margin: 0 0 8px;
+  font-family: 'Georgia', serif;
+}
+.brand-subtitle { font-size: 16px; font-weight: 600; color: #111; margin: 0 0 4px; }
+.brand-sub2 { font-size: 13px; color: #888; margin: 0; }
+
+.form-section { margin-bottom: 8px; }
+
+.field-group {
+  margin-bottom: 12px;
+  &.field-error .field-wrapper { border-color: #e53e3e; }
+}
+
+.field-wrapper {
+  display: flex; align-items: center;
+  border: 1.5px solid #e2e2e2; border-radius: 10px;
+  padding: 0 14px; background: #fafafa;
+  transition: border-color 0.2s;
+  &:focus-within { border-color: #111; background: #fff; }
+}
+
+.field-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: #111; font-size: 15px; padding: 15px 0; font-family: inherit;
+  &::placeholder { color: #aaa; }
+}
+
+.toggle-pw {
+  background: none; border: none; padding: 0; cursor: pointer;
+  color: #888; font-size: 18px; display: flex; align-items: center;
+}
+
+.error-msg { display: block; font-size: 11px; color: #e53e3e; margin-top: 4px; padding-left: 2px; }
+
+// ── Password Strength ──
+.pw-strength {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 4px;
+  background: #e2e2e2;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.strength-label {
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 36px;
+  text-align: right;
+  transition: color 0.3s;
+}
+
+// ── Password Checklist ──
+.pw-checklist {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pw-rule {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #aaa;
+  transition: color 0.2s;
+
+  ion-icon {
+    font-size: 14px;
+    color: #ccc;
+    flex-shrink: 0;
+    transition: color 0.2s;
+  }
+
+  &.pw-rule-ok {
+    color: #22c55e;
+    ion-icon { color: #22c55e; }
+  }
+}
+
+// ── Role Selector ──
+.role-selector { display: flex; gap: 12px; }
+
+.role-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 8px; height: 48px; border-radius: 10px;
+  border: 1.5px solid #e2e2e2; background: #fafafa;
+  color: #888; font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: all 0.2s;
+  ion-icon { font-size: 18px; }
+
+  &.role-active {
+    border-color: #111; background: #111; color: #fff;
+  }
+  &:hover:not(.role-active) { background: #f0f0f0; border-color: #ccc; color: #333; }
+}
+
+.btn-primary {
+  width: 100%; height: 52px; margin-top: 8px;
+  background: #111; border: none; border-radius: 12px;
+  color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.2s;
+  &:hover:not(:disabled) { opacity: 0.85; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &.btn-loading { pointer-events: none; }
+}
+.btn-spinner { --color: #fff; width: 22px; height: 22px; }
+
+.divider {
+  position: relative; text-align: center; margin: 20px 0;
+  span { background: #fff; padding: 0 12px; font-size: 13px; color: #aaa; position: relative; z-index: 1; }
+  &::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #e2e2e2; }
+}
+
+.social-row { display: flex; gap: 12px; margin-bottom: 20px; }
+.social-btn {
+  flex: 1; height: 52px; background: #fff;
+  border: 1.5px solid #e2e2e2; border-radius: 12px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+  &:hover { background: #f5f5f5; }
+}
+
+.terms-text {
+  text-align: center; font-size: 11px; color: #aaa;
+  line-height: 1.7; margin: 0 0 16px;
+}
+.terms-link { color: #555; text-decoration: underline; }
+
+.switch-text { text-align: center; font-size: 14px; color: #555; margin: 0; }
+.switch-link { color: #111; font-weight: 700; cursor: pointer; margin-left: 4px; text-decoration: underline; }

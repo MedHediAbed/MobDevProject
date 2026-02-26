@@ -1,0 +1,97 @@
+/*
+ * FreelanceHub – Global Styles
+ * Full replacement for src/global.scss
+ */
+
+/* ── Ionic Core ── */
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* ── Optional Ionic Utilities ── */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* ── Reset / Base ── */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  background-color: #ffffff;
+}
+
+/* ─────────────────────────────────
+   Custom Loading Overlay
+───────────────────────────────── */
+.custom-loading {
+  --backdrop-opacity: 0.6;
+
+  .loading-wrapper {
+    background: #161a24 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px !important;
+    color: #eef0f6;
+    padding: 20px 28px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .loading-content {
+    color: #eef0f6 !important;
+    font-size: 14px;
+  }
+
+  ion-spinner {
+    --color: #f5a623;
+  }
+}
+
+/* ─────────────────────────────────
+   Custom Toast
+───────────────────────────────── */
+.custom-toast {
+  --border-radius: 12px;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --min-height: 48px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ─────────────────────────────────
+   Scrollbar (web/desktop preview)
+───────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(245, 166, 35, 0.3);
+  border-radius: 4px;
+}
+
+/* ─────────────────────────────────
+   Remove blue tap highlight on mobile
+───────────────────────────────── */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─────────────────────────────────
+   Input autofill override (Chrome dark bg fix)
+───────────────────────────────── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #eef0f6;
+  -webkit-box-shadow: 0 0 0px 1000px #161a24 inset;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: #eef0f6;
+}
