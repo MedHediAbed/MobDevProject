@@ -180,12 +180,12 @@ def google_login():
         if user.get("status") != "active":
             return jsonify({"error": "Account is not active"}), 403
     else:
-        # New user — create account (default role: freelancer, can be changed later)
+        # New user — create account 
         new_user = {
             "name": name or google_data.get("name", "User"),
             "email": email,
             "password": "",           # No password for OAuth users
-            "role": "freelancer",
+            "role": data.get("role", "freelancer"),
             "status": "active",
             "provider": "google",
             "google_id": google_id,

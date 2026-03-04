@@ -93,7 +93,7 @@ export class AuthService {
     });
   }
 
-  loginWithGoogle(): Promise<void> {
+  loginWithGoogle(role: 'freelancer' | 'client' = 'freelancer'): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
         await this.waitForGoogle();
@@ -118,12 +118,7 @@ export class AuthService {
               // Send to Flask
               const res = await this.http.post<AuthResponse>(
                 `${this.API_URL}/google`,
-                {
-                  access_token: tokenResponse.access_token,
-                  name: userInfo.name,
-                  email: userInfo.email,
-                  google_id: userInfo.sub
-                }
+               { access_token: tokenResponse.access_token, name: userInfo.name, email: userInfo.email, google_id: userInfo.sub, role: role }
               ).toPromise();
 
               if (res) {

@@ -13,11 +13,9 @@ import { AuthService } from '../../services/auth.service';
   imports: [CommonModule, ReactiveFormsModule, IonicModule]
 })
 export class LoginPage implements OnInit {
-
   loginForm!: FormGroup;
   showPassword = false;
   isLoading = false;
-  isGoogleLoading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -28,26 +26,19 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email:    ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  get email() { return this.loginForm.get('email')!; }
+  get email()    { return this.loginForm.get('email')!; }
   get password() { return this.loginForm.get('password')!; }
 
-  togglePassword() {
-    this.showPassword = !this.showPassword;
-  }
+  togglePassword() { this.showPassword = !this.showPassword; }
 
   async onSubmit() {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-
+    if (this.loginForm.invalid) { this.loginForm.markAllAsTouched(); return; }
     this.isLoading = true;
-
     this.authService.login(this.loginForm.value).subscribe({
       next: async (res) => {
         this.isLoading = false;
@@ -61,40 +52,12 @@ export class LoginPage implements OnInit {
     });
   }
 
-  async loginWithGoogle() {
-    this.isGoogleLoading = true;
-    try {
-      await this.authService.loginWithGoogle();
-    } catch (err: any) {
-      await this.showToast(err.message || 'Google login failed', 'danger');
-    } finally {
-      this.isGoogleLoading = false;
-    }
-  }
-
-  // TEMP placeholders
-  async loginWithApple() {
-    await this.showToast('Apple login not implemented yet', 'medium');
-  }
-
-  async loginWithFacebook() {
-    await this.showToast('Facebook login not implemented yet', 'medium');
-  }
-
   async showToast(message: string, color: string) {
     const toast = await this.toastCtrl.create({
-      message,
-      duration: 2500,
-      color,
-      position: 'top'
+      message, duration: 2500, color, position: 'top'
     });
     await toast.present();
   }
 
-  goToLogin() {
-    this.router.navigate(['/login']);
-  }
-  goToRegister() {
-    this.router.navigate(['/register']);
-  }
+  goToRegister() { this.router.navigate(['/register']); }
 }

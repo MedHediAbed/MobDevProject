@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonicModule, LoadingController, ToastController } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
 
 function strongPasswordValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value || '';
   const errors: any = {};
-  if (value.length < 8)             errors['minlength'] = true;
-  if (!/[A-Z]/.test(value))         errors['uppercase'] = true;
-  if (!/[a-z]/.test(value))         errors['lowercase'] = true;
-  if (!/[0-9]/.test(value))         errors['number']    = true;
+  if (value.length < 8)           errors['minlength'] = true;
+  if (!/[A-Z]/.test(value))       errors['uppercase'] = true;
+  if (!/[a-z]/.test(value))       errors['lowercase'] = true;
+  if (!/[0-9]/.test(value))       errors['number']    = true;
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) errors['symbol'] = true;
   return Object.keys(errors).length ? errors : null;
 }
@@ -27,12 +27,14 @@ export class RegisterPage implements OnInit {
   registerForm!: FormGroup;
   showPassword = false;
   isLoading = false;
+  isGoogleLoading = false;
+  showRolePicker = false;
+  googleRole: 'freelancer' | 'client' = 'freelancer';
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
   ) {}
 
@@ -41,6 +43,8 @@ export class RegisterPage implements OnInit {
   ionViewWillEnter() {
     this.buildForm();
     this.showPassword = false;
+    this.showRolePicker = false;
+    this.googleRole = 'freelancer';
   }
 
   private buildForm() {
@@ -84,26 +88,51 @@ export class RegisterPage implements OnInit {
   async onSubmit() {
     if (this.registerForm.invalid) { this.registerForm.markAllAsTouched(); return; }
     this.isLoading = true;
-    const loading = await this.loadingCtrl.create({ message: 'Creating your account...', cssClass: 'custom-loading' });
-    await loading.present();
     this.authService.register(this.registerForm.value).subscribe({
       next: async () => {
-        await loading.dismiss();
         this.isLoading = false;
         await this.authService.logout();
         await this.showToast('Account created! Please sign in.', 'success');
         this.router.navigate(['/login'], { replaceUrl: true });
       },
       error: async (err) => {
-        await loading.dismiss();
         this.isLoading = false;
         await this.showToast(err.message, 'danger');
       }
     });
   }
 
-  private async showToast(message: string, color: string) {
-    const toast = await this.toastCtrl.create({ message, duration: 3000, color, position: 'top', cssClass: 'custom-toast' });
+  // Step 1 — show role picker
+  openRolePicker() {
+    this.showRolePicker = true;
+    this.googleRole = 'freelancer';
+  }
+
+  // Step 2 — user picked role, now launch Google
+  async confirmGoogleLogin() {
+    this.isGoogleLoading = true;
+    try {
+      await this.authService.loginWithGoogle(this.googleRole);
+    } catch (err: any) {
+      await this.showToast(err.message || 'Google sign-in failed.', 'danger');
+    } finally {
+      this.isGoogleLoading = false;
+      this.showRolePicker = false;
+    }
+  }
+
+  async loginWithApple() {
+    await this.showToast('Apple login coming soon', 'medium');
+  }
+
+  async loginWithFacebook() {
+    await this.showToast('Facebook login coming soon', 'medium');
+  }
+
+  async showToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message, duration: 2500, color, position: 'top'
+    });
     await toast.present();
   }
 
