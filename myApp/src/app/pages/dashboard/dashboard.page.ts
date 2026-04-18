@@ -1,46 +1,72 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { AuthService, User } from '../../services/auth.service';
+import { IonicModule } from '@ionic/angular';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
+  templateUrl: './dashboard.page.html',
+  styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule],
-  template: `
-    <ion-header>
-      <ion-toolbar color="dark">
-        <ion-title>FreelanceHub</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="logout()">
-            <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding" style="--background:#0d0f14; color:#eef0f6;">
-      <div style="text-align:center; padding-top: 60px;">
-        <div style="font-size:48px;">🎉</div>
-        <h2 style="color:#f5a623; font-family:Georgia,serif; margin-top:16px;">You're in!</h2>
-        <p style="color:#6b7280;" *ngIf="user">
-          Welcome, <strong style="color:#eef0f6;">{{ user.name }}</strong><br/>
-          Role: <span style="color:#f5a623; text-transform:capitalize;">{{ user.role }}</span>
-        </p>
-      </div>
-    </ion-content>
-  `
+  imports: [CommonModule, IonicModule]
 })
 export class DashboardPage implements OnInit {
-  user: User | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  popularServices = [
+    {
+      title: 'Graphic & Design',
+      image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=300&q=80'
+    },
+    {
+      title: 'Video & Animation',
+      image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=300&q=80'
+    },
+    {
+      title: 'Programming & Tech',
+      image: 'https://images.unsplash.com/photo-1555099962-4199c345e5dd?w=300&q=80'
+    },
+    {
+      title: 'Writing & Translation',
+      image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=300&q=80'
+    },
+    {
+      title: 'Digital Marketing',
+      image: 'https://images.unsplash.com/photo-1557838923-2985c318be48?w=300&q=80'
+    }
+  ];
 
-  ngOnInit() {
-    this.user = this.authService.currentUser;
-  }
+  newestServices = [
+    {
+      title: 'AI Artists',
+      image: 'https://images.unsplash.com/photo-1686191128892-3b37add4c844?w=400&q=80'
+    },
+    {
+      title: 'Virtual Assistance',
+      image: 'https://images.unsplash.com/photo-1587560699334-cc4ff634909a?w=400&q=80'
+    },
+    {
+      title: 'Voice Over',
+      image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=400&q=80'
+    },
+    {
+      title: 'Social Media',
+      image: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=400&q=80'
+    }
+  ];
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {}
 
   async logout() {
     await this.authService.logout();
+  }
+
+  goToProfile() {
+    // navigate to profile page when built
   }
 }

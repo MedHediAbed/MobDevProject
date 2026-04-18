@@ -1,13 +1,61 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>dashboard</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="dashboard-content" [scrollEvents]="true">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">dashboard</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- Header -->
+  <div class="dash-header">
+    <div class="dash-header-top">
+      <div class="dash-logo">FreelanceHub</div>
+      <div class="dash-avatar" (click)="goToProfile()">
+        <ion-icon name="person-outline"></ion-icon>
+      </div>
+    </div>
+    <!-- Search -->
+    <div class="search-bar">
+      <ion-icon name="menu-outline" class="search-menu"></ion-icon>
+      <input type="text" placeholder="Search services" class="search-input" />
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Popular Services -->
+  <div class="section">
+    <h2 class="section-title">Popular Services</h2>
+    <div class="popular-scroll">
+      <div class="popular-card" *ngFor="let s of popularServices">
+        <img [src]="s.image" [alt]="s.title" class="popular-img" />
+        <div class="popular-overlay">
+          <span class="popular-label">{{ s.title }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newest Services -->
+  <div class="section">
+    <h2 class="section-title">Our Newest Services</h2>
+    <div class="newest-grid">
+      <div class="newest-card" *ngFor="let s of newestServices">
+        <img [src]="s.image" [alt]="s.title" class="newest-img" />
+        <span class="newest-label">{{ s.title }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="height: 90px"></div>
+
 </ion-content>
+
+<!-- Bottom Tab Bar -->
+<div class="tab-bar">
+  <button class="tab-btn active">
+    <ion-icon name="home"></ion-icon>
+  </button>
+  <button class="tab-btn">
+    <ion-icon name="grid-outline"></ion-icon>
+  </button>
+  <button class="tab-btn">
+    <ion-icon name="chatbubble-outline"></ion-icon>
+  </button>
+  <button class="tab-btn" (click)="goToProfile()">
+    <ion-icon name="person-outline"></ion-icon>
+  </button>
+</div>
