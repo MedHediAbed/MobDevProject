@@ -23,7 +23,7 @@ import requests as http_requests  # pip install requests
 
 app = Flask(__name__)
 
-app.config["MONGO_URI"] = "mongodb://localhost:27017/freelancehub"
+app.config["MONGO_URI"] = "MONGODB_URI=mongodb+srv://aabedmedhedi_db_user:DPC6u9ZW7QPiG71p@cluster0.xxxxx.mongodb.net/YourDBName"
 app.config["JWT_SECRET_KEY"] = "super-secret-key-change-later"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=2)
 
