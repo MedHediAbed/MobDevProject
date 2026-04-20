@@ -1,3 +1,34 @@
-<ion-app>
+<ion-app [class.has-bottom-nav]="showBottomNav">
   <ion-router-outlet></ion-router-outlet>
+
+  <nav class="app-bottom-nav" *ngIf="showBottomNav" aria-label="Main">
+    <a
+      routerLink="/dashboard"
+      class="nav-item"
+      [class.active]="isNavActive('home')"
+    >
+      <ion-icon name="home" aria-hidden="true"></ion-icon>
+    </a>
+    <a
+      routerLink="/gigs"
+      class="nav-item"
+      [class.active]="isNavActive('gigs')"
+    >
+      <ion-icon name="storefront-outline" aria-hidden="true"></ion-icon>
+    </a>
+    <a
+      routerLink="/my-proposals"
+      class="nav-item"
+      [class.active]="isNavActive('chat')"
+    >
+      <ion-icon name="chatbubble-outline" aria-hidden="true"></ion-icon>
+    </a>
+    <a
+      routerLink="/edit-profile"
+      class="nav-item"
+      [class.active]="isNavActive('profile')"
+    >
+      <ion-icon name="person-circle" aria-hidden="true"></ion-icon>
+    </a>
+  </nav>
 </ion-app>

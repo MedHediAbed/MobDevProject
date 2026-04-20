@@ -110,11 +110,14 @@
   border-radius: 14px;
   overflow: hidden;
   position: relative;
-  cursor: pointer;
   background: #1e1e1e;
 
   &:active { transform: scale(0.97); }
   transition: transform 0.15s;
+}
+
+.popular-card--link {
+  cursor: pointer;
 }
 
 .popular-img {
@@ -177,41 +180,8 @@
   text-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 
-// ── Bottom Tab Bar ──
-.tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 70px;
-  background: #1a1a1a;
-  border-top: 1px solid #2a2a2a;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding-bottom: env(safe-area-inset-bottom);
-  z-index: 100;
-}
-
-.tab-btn {
-  flex: 1;
-  height: 100%;
-  background: none;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-
-  ion-icon {
-    font-size: 24px;
-    color: #555;
-    transition: color 0.2s;
-  }
-
-  &.active ion-icon {
-    color: #ffffff;
-  }
-
-  &:hover ion-icon { color: #aaa; }
+.newest-card--ai {
+  background-image: url('/assets/ai-artists-bg.png');
+  background-size: cover;
+  background-position: center;
 }

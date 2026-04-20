@@ -1,0 +1,41 @@
+.app-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  min-height: 56px;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #ffffff;
+  border-top: 1px solid #e8e8e8;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 8px;
+  color: #8e8e93;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+
+  ion-icon {
+    font-size: 26px;
+  }
+
+  &.active,
+  &.router-link-active {
+    color: #111111;
+  }
+}
+
+ion-app.has-bottom-nav {
+  ion-content {
+    --padding-bottom: calc(56px + env(safe-area-inset-bottom));
+  }
+}

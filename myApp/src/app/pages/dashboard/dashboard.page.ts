@@ -13,14 +13,15 @@ import { AuthService } from '../../services/auth.service';
 })
 export class DashboardPage implements OnInit {
 
-  popularServices = [
+  popularServices: Array<{ title: string; image: string; categorySlug?: string }> = [
     {
       title: 'Graphic & Design',
-      image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=300&q=80'
+      image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=300&q=80',
+      categorySlug: 'graphic-design',
     },
     {
       title: 'Video & Animation',
-      image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=300&q=80'
+      image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=300&q=80',
     },
     {
       title: 'Programming & Tech',
@@ -36,10 +37,11 @@ export class DashboardPage implements OnInit {
     }
   ];
 
-  newestServices = [
+  newestServices: Array<{ title: string; image: string; useAiArtistsBg?: boolean }> = [
     {
       title: 'AI Artists',
-      image: 'https://images.unsplash.com/photo-1686191128892-3b37add4c844?w=400&q=80'
+      image: 'https://images.unsplash.com/photo-1686191128892-3b37add4c844?w=400&q=80',
+      useAiArtistsBg: true,
     },
     {
       title: 'Virtual Assistance',
@@ -67,6 +69,13 @@ export class DashboardPage implements OnInit {
   }
 
   goToProfile() {
-    // navigate to profile page when built
+    this.router.navigate(['/edit-profile']);
+  }
+
+  openPopularCategory(slug?: string) {
+    if (!slug) {
+      return;
+    }
+    this.router.navigate(['/gigs/category', slug]);
   }
 }

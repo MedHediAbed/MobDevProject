@@ -41,7 +41,7 @@
           <div class="pw-strength" *ngIf="pwValue.length > 0">
             <div class="strength-bar">
               <div class="strength-bar-fill"
-                [style.width.%]="(pwStrength / 5) * 100"
+                [style.width.%]="(pwStrength / 3) * 100"
                 [style.background]="pwStrengthColor">
               </div>
             </div>
@@ -52,23 +52,17 @@
               <ion-icon [name]="pwHasLength ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
               <span>At least 8 characters</span>
             </div>
-            <div class="pw-rule" [class.pw-rule-ok]="pwHasUpper">
-              <ion-icon [name]="pwHasUpper ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
-              <span>Uppercase letter (A-Z)</span>
-            </div>
-            <div class="pw-rule" [class.pw-rule-ok]="pwHasLower">
-              <ion-icon [name]="pwHasLower ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
-              <span>Lowercase letter (a-z)</span>
+            <div class="pw-rule" [class.pw-rule-ok]="pwHasLetter">
+              <ion-icon [name]="pwHasLetter ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+              <span>At least one letter (a–z or A–Z)</span>
             </div>
             <div class="pw-rule" [class.pw-rule-ok]="pwHasNumber">
               <ion-icon [name]="pwHasNumber ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
-              <span>Number (0-9)</span>
-            </div>
-            <div class="pw-rule" [class.pw-rule-ok]="pwHasSymbol">
-              <ion-icon [name]="pwHasSymbol ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
-              <span>Symbol (!@#$...)</span>
+              <span>At least one number (0–9)</span>
             </div>
           </div>
+          <span class="error-msg" *ngIf="password.hasError('required') && password.touched">Password is required</span>
+          <span class="error-msg" *ngIf="password.invalid && password.touched && !password.hasError('required')">Use a medium password: 8+ characters with letters and numbers</span>
         </div>
 
         <div class="field-group">

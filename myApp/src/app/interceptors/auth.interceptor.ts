@@ -16,6 +16,25 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    // Do not wait on Ionic Storage for unauthenticated auth calls — getToken() can block
+    // until storage is ready, which would freeze login/register/google forever.
+    const url = request.url;
+    const isPublicAuth =
+      url.includes('/api/auth/login') ||
+      url.includes('/api/auth/register') ||
+      url.includes('/api/auth/google');
+
+    if (isPublicAuth) {
+      return next.handle(request).pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            this.authService.logout();
+          }
+          return throwError(() => error);
+        })
+      );
+    }
+
     return from(this.authService.getToken()).pipe(
       switchMap(token => {
         if (token) {

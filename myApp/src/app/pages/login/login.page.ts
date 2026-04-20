@@ -42,7 +42,7 @@ export class LoginPage implements OnInit {
     this.authService.login(this.loginForm.value).subscribe({
       next: async (res) => {
         this.isLoading = false;
-        await this.showToast('Welcome ' + res.user.name, 'success');
+        await this.showToast('Welcome ' + res.user.nom, 'success');
         this.router.navigate(['/dashboard'], { replaceUrl: true });
       },
       error: async (err) => {
