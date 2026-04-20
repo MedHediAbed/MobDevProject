@@ -1,0 +1,302 @@
+.page-my-profile {
+  --background: #ffffff;
+  --padding-bottom: 100px;
+}
+
+.profile-card {
+  margin: 16px 16px 8px;
+  padding: 24px 16px 20px;
+  background: #e8e8ed;
+  border-radius: 16px;
+}
+
+.photo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.photo-ring {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  margin-bottom: 14px;
+}
+
+.photo-img {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  background: #fff;
+}
+
+.photo-fallback {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: #d1d1d6;
+  border: 3px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 56px;
+    color: #111;
+  }
+}
+
+.cam-btn {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #f2f2f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+
+  ion-icon {
+    font-size: 18px;
+    color: #333;
+  }
+}
+
+.name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.username {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+}
+
+.pen-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 20px;
+    color: #333;
+  }
+}
+
+.section-block {
+  margin-top: 8px;
+  padding: 0 16px;
+}
+
+.section-heading {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin: 18px 0 10px;
+}
+
+.settings-list {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e5ea;
+  margin: 0;
+  padding: 0;
+}
+
+.settings-item {
+  --min-height: 52px;
+  --padding-start: 14px;
+  --inner-padding-end: 8px;
+}
+
+.item-icon {
+  font-size: 22px;
+  color: #111;
+  margin-inline-end: 12px;
+}
+
+.chev {
+  font-size: 18px;
+  color: #c7c7cc;
+}
+
+.logout-wrap {
+  margin: 20px 16px 8px;
+}
+
+.logout-item {
+  --background: #fff;
+  border-radius: 12px;
+  border: 1px solid #ffe0e0;
+}
+
+.logout-icon,
+.logout-chev {
+  color: #e53935 !important;
+}
+
+.freelancer-block {
+  margin-top: 24px;
+  padding: 0 0 24px;
+}
+
+.notice {
+  margin: 0 16px 16px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+}
+
+.notice p {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.form-block {
+  padding: 8px 0 32px;
+}
+
+.cv-row {
+  padding: 0 16px 8px;
+}
+
+.plain-list {
+  background: transparent;
+}
+
+.field {
+  --background: #fff;
+  --border-radius: 10px;
+  margin: 8px 16px;
+  border: 1px solid #e8e8e8;
+}
+
+.portfolio-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 0;
+}
+
+.portfolio-head h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+}
+
+.port-row {
+  margin-bottom: 8px;
+}
+
+.save-btn {
+  margin: 24px 16px 0;
+  --border-radius: 10px;
+}
+
+.btn-spinner {
+  width: 22px;
+  height: 22px;
+}
+
+.pad {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.modal-body {
+  --background: var(--ion-background-color, #fff);
+}
+
+.modal-field {
+  --background: transparent;
+  margin-bottom: 8px;
+}
+
+.modal-save {
+  margin-top: 16px;
+}
+
+.native-date-wrap {
+  margin: 12px 0 8px;
+  padding: 0 16px;
+}
+
+.native-date-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ion-color-medium, #666);
+  margin-bottom: 8px;
+  padding-left: 2px;
+}
+
+.native-date-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--ion-color-light-shade, #d0d0d0);
+  background: var(--ion-background-color, #fff);
+  color: var(--ion-text-color, #111);
+}
+
+.modal-hint {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+:host-context(html.ion-palette-dark) {
+  .page-my-profile {
+    --background: #000000;
+  }
+
+  .profile-card {
+    background: #2c2c2e;
+  }
+
+  .username {
+    color: #fff;
+  }
+
+  .section-heading {
+    color: #fff;
+  }
+
+  .settings-list {
+    --background: #1c1c1e;
+    border-color: #3a3a3c;
+  }
+
+  .settings-item {
+    --background: #1c1c1e;
+    --color: #fff;
+  }
+
+  .item-icon {
+    color: #fff;
+  }
+
+  .logout-item {
+    --background: #1c1c1e;
+  }
+}

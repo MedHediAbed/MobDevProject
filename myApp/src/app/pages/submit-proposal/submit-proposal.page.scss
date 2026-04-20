@@ -1,0 +1,30 @@
+.page-light {
+  --background: #f7f7f7;
+}
+
+.hint {
+  padding: 16px 20px 0;
+  color: #555;
+  font-size: 13px;
+}
+
+.plain-list {
+  background: transparent;
+}
+
+.field {
+  --background: #fff;
+  --border-radius: 10px;
+  margin: 8px 16px;
+  border: 1px solid #e8e8e8;
+}
+
+.save-btn {
+  margin: 24px 16px 0;
+  --border-radius: 10px;
+}
+
+.btn-spinner {
+  width: 22px;
+  height: 22px;
+}

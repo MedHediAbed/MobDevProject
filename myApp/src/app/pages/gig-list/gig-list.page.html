@@ -1,0 +1,48 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gigs</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-dark">
+  <div class="filter-bar">
+    <ion-item class="filter-item" lines="none">
+      <ion-input
+        [(ngModel)]="tagFilter"
+        placeholder="Filter by tag"
+        (keyup.enter)="applyFilter()"
+      ></ion-input>
+      <ion-button slot="end" size="small" (click)="applyFilter()">Apply</ion-button>
+    </ion-item>
+  </div>
+
+  <div class="pad" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="card-list" *ngIf="!loading">
+    <ion-card *ngFor="let g of gigs" class="gig-card" [routerLink]="['/gigs', g._id]">
+      <div class="card-row">
+        <div class="thumb"></div>
+        <div class="card-main">
+          <div class="card-top">
+            <h2>{{ g.title }}</h2>
+            <span class="price">{{ g.price | number : '1.0-2' }} DT</span>
+          </div>
+          <p class="desc">{{ g.description }}</p>
+          <p class="meta" *ngIf="g.freelancerNom">by {{ g.freelancerNom }}</p>
+          <div class="tags" *ngIf="g.tags?.length">
+            <ion-chip *ngFor="let t of g.tags" color="medium">{{ t }}</ion-chip>
+          </div>
+        </div>
+      </div>
+    </ion-card>
+  </div>
+
+  <div class="empty" *ngIf="!loading && gigs.length === 0">
+    <p>No gigs match this filter.</p>
+  </div>
+</ion-content>

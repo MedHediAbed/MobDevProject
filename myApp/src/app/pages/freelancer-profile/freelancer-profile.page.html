@@ -1,0 +1,146 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isDemo ? (profile?.name || 'Profile') : 'Profile' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<!-- Demo profiles (Graphic & Design + Albert reference) -->
+<ion-content class="page-dark page-dark--demo" *ngIf="!loading && profile && isDemo">
+  <div class="demo-hero">
+    <div class="demo-avatar">{{ initials(profile.name) }}</div>
+    <h1 class="demo-name">{{ profile.name }}</h1>
+    <p class="demo-email" *ngIf="profile.email">
+      {{ profile.email }}
+      <ion-icon
+        *ngIf="demoExtra()?.emailVerified"
+        name="checkmark-circle"
+        class="demo-verify"
+        color="success"
+      ></ion-icon>
+    </p>
+    <p class="demo-phone" *ngIf="demoExtra()?.phone">{{ demoExtra()?.phone }}</p>
+
+    <div class="demo-actions">
+      <ion-button
+        *ngIf="profile.cvUrl"
+        class="demo-btn"
+        fill="solid"
+        color="medium"
+        [href]="cvHref(profile.cvUrl)"
+        target="_blank"
+        rel="noopener"
+      >
+        <ion-icon slot="start" name="document-text-outline"></ion-icon>
+        View CV
+      </ion-button>
+      <ion-button *ngIf="!profile.cvUrl" class="demo-btn" fill="solid" color="medium" disabled="true">
+        <ion-icon slot="start" name="document-text-outline"></ion-icon>
+        View CV
+      </ion-button>
+      <ion-button class="demo-btn demo-btn--outline" fill="outline" color="light" type="button">
+        <ion-icon slot="start" name="chatbubble-outline"></ion-icon>
+        Message me
+      </ion-button>
+    </div>
+  </div>
+
+  <ion-segment class="demo-segment" [(ngModel)]="selectedTab" mode="ios">
+    <ion-segment-button value="services">Services</ion-segment-button>
+    <ion-segment-button value="products">Products</ion-segment-button>
+    <ion-segment-button value="reviews">Reviews</ion-segment-button>
+  </ion-segment>
+
+  <div class="demo-panel" *ngIf="selectedTab === 'services'">
+    <h2 class="demo-section-title">About</h2>
+    <p class="demo-body">{{ profile.bio || '—' }}</p>
+    <div class="demo-skills" *ngIf="profile.skills?.length">
+      <ion-chip *ngFor="let s of profile.skills" color="primary">{{ s }}</ion-chip>
+    </div>
+  </div>
+
+  <div class="demo-panel" *ngIf="selectedTab === 'products'">
+    <div class="product-cards" *ngIf="demoExtra()?.products?.length; else noProducts">
+      <div class="product-card" *ngFor="let pr of demoExtra()!.products!">
+        <div class="product-img-wrap">
+          <img [src]="pr.image" [alt]="pr.title" />
+        </div>
+        <h3 class="product-title">{{ pr.title }}</h3>
+        <div class="product-row">
+          <span class="product-rating">
+            <ion-icon name="star" class="product-star"></ion-icon>
+            {{ pr.rating }} ({{ pr.ratingCount }})
+          </span>
+          <span class="product-price">{{ pr.priceLabel }}</span>
+        </div>
+      </div>
+    </div>
+    <ng-template #noProducts>
+      <p class="demo-muted">No products listed.</p>
+    </ng-template>
+  </div>
+
+  <div class="demo-panel" *ngIf="selectedTab === 'reviews'">
+    <p class="demo-muted">No reviews yet.</p>
+  </div>
+</ion-content>
+
+<!-- API-loaded freelancer -->
+<ion-content class="page-dark" *ngIf="!loading && profile && !isDemo">
+  <div class="hero">
+    <div class="avatar-wrap">
+      <ion-icon name="person-circle-outline" class="avatar"></ion-icon>
+    </div>
+    <h1 class="name">{{ profile.name || 'Freelancer' }}</h1>
+    <p class="email">{{ profile.email }}</p>
+    <p class="status-chip" *ngIf="profile.status">Status: {{ profile.status }}</p>
+
+    <div class="actions">
+      <ion-button
+        *ngIf="profile.cvUrl"
+        fill="solid"
+        color="light"
+        class="action-btn"
+        [href]="cvHref(profile.cvUrl)"
+        target="_blank"
+        rel="noopener"
+      >
+        <ion-icon slot="start" name="document-text-outline"></ion-icon>
+        View CV
+      </ion-button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Bio</h2>
+    <p class="body-text">{{ profile.bio || '—' }}</p>
+  </div>
+
+  <div class="section" *ngIf="profile.skills?.length">
+    <h2 class="section-title">Skills</h2>
+    <div class="tags">
+      <ion-chip *ngFor="let s of profile.skills" color="primary">{{ s }}</ion-chip>
+    </div>
+  </div>
+
+  <div class="section" *ngIf="profile.portfolio?.length">
+    <h2 class="section-title">Portfolio</h2>
+    <ion-list lines="none" class="inner-list">
+      <ion-item *ngFor="let item of profile.portfolio" class="inner-item" button [href]="item.url" target="_blank" rel="noopener">
+        <ion-label>
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.url }}</p>
+        </ion-label>
+        <ion-icon slot="end" name="open-outline"></ion-icon>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
+
+<ion-content class="page-dark" *ngIf="loading">
+  <div class="pad">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+</ion-content>

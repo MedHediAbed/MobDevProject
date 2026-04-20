@@ -1,0 +1,30 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/gigs" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gig</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-dark" *ngIf="!loading && gig">
+  <div class="hero">
+    <div class="hero-img"></div>
+    <h1>{{ gig.title }}</h1>
+    <p class="price">From {{ gig.price | number : '1.0-2' }} DT</p>
+    <p class="by" *ngIf="gig.freelancerNom">Freelancer: {{ gig.freelancerNom }}</p>
+    <div class="tags" *ngIf="gig.tags?.length">
+      <ion-chip *ngFor="let t of gig.tags" color="primary">{{ t }}</ion-chip>
+    </div>
+  </div>
+  <div class="body">
+    <h2>Description</h2>
+    <p>{{ gig.description }}</p>
+  </div>
+</ion-content>
+
+<ion-content class="page-dark" *ngIf="loading">
+  <div class="pad">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+</ion-content>

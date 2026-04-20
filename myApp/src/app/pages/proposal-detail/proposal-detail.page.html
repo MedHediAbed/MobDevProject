@@ -1,0 +1,42 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/gigs/category/graphic-design" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Proposal</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-proposal" *ngIf="!loading && proposal">
+  <div class="hero-img-wrap">
+    <img [src]="proposal.thumbnail" [alt]="proposal.title" class="hero-img" />
+  </div>
+
+  <div class="body">
+    <h1 class="title">{{ proposal.title }}</h1>
+    <div class="meta-row">
+      <div class="rating">
+        <ion-icon name="star" class="star"></ion-icon>
+        <span>{{ proposal.rating }} ({{ proposal.ratingCount }})</span>
+      </div>
+      <div class="price">From <strong>{{ proposal.price }} DT</strong></div>
+    </div>
+
+    <p class="full-desc">{{ proposal.fullDescription }}</p>
+
+    <div class="owner-card">
+      <div class="owner-avatar" aria-hidden="true">{{ ownerAvatarInitials }}</div>
+      <div class="owner-text">
+        <span class="owner-label">Freelancer</span>
+        <span class="owner-name">{{ ownerName }}</span>
+      </div>
+      <a [routerLink]="['/freelancers', proposal.freelancerId]" class="show-profile">Show profile</a>
+    </div>
+  </div>
+</ion-content>
+
+<ion-content class="page-proposal" *ngIf="loading">
+  <div class="pad">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+</ion-content>

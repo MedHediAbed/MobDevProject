@@ -1,0 +1,23 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/edit-profile" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Frequently Asked Questions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="faq-page">
+  <p class="faq-intro">Find answers to common questions about FreelanceHub.</p>
+
+  <ion-accordion-group [multiple]="true" class="faq-group">
+    <ion-accordion *ngFor="let item of items; let i = index" [value]="'q' + i" class="faq-acc">
+      <ion-item slot="header" class="faq-header" lines="none">
+        <ion-label class="faq-q">{{ item.question }}</ion-label>
+      </ion-item>
+      <div class="faq-content" slot="content">
+        <p>{{ item.answer }}</p>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+</ion-content>

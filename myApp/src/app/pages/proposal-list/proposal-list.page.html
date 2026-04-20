@@ -1,0 +1,28 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>My proposals</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-dark">
+  <div class="pad" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!loading" lines="none" class="dark-list">
+    <ion-item *ngFor="let p of proposals" class="dark-item">
+      <ion-label>
+        <h2>Offer {{ p.offerId }}</h2>
+        <p class="amt">{{ p.amount | number : '1.0-2' }} DT — {{ p.status }}</p>
+        <p class="msg">{{ p.message }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div class="empty" *ngIf="!loading && proposals.length === 0">
+    <p>You have not submitted any proposals yet.</p>
+  </div>
+</ion-content>

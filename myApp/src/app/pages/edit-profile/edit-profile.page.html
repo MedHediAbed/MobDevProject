@@ -1,0 +1,215 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-my-profile">
+  <div class="profile-card" *ngIf="user">
+    <div class="photo-block">
+      <div class="photo-ring">
+        <img *ngIf="avatarSrc()" [src]="avatarSrc()!" alt="" class="photo-img" />
+        <div *ngIf="!avatarSrc()" class="photo-fallback">
+          <ion-icon name="person" aria-hidden="true"></ion-icon>
+        </div>
+        <button type="button" class="cam-btn" (click)="camInput.click()" [disabled]="uploadingAvatar" aria-label="Change profile photo">
+          <ion-icon name="camera" aria-hidden="true"></ion-icon>
+        </button>
+        <input #camInput type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden (change)="onAvatarPick($event)" />
+      </div>
+      <div class="name-row">
+        <span class="username">{{ displayName }}</span>
+        <button type="button" class="pen-btn" (click)="openNameModal()" aria-label="Edit name">
+          <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-block" *ngIf="user">
+    <h2 class="section-heading">Edit my infos</h2>
+    <ion-list class="settings-list" lines="full">
+      <ion-item button detail="false" class="settings-item" (click)="openPwdModal()">
+        <ion-icon name="key-outline" slot="start" class="item-icon"></ion-icon>
+        <ion-label>Change Password</ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end" class="chev"></ion-icon>
+      </ion-item>
+      <ion-item button detail="false" class="settings-item" (click)="openGeneralModal()">
+        <ion-icon name="card-outline" slot="start" class="item-icon"></ion-icon>
+        <ion-label>General Infos</ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end" class="chev"></ion-icon>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div class="section-block" *ngIf="user">
+    <h2 class="section-heading">Settings</h2>
+    <ion-list class="settings-list" lines="full">
+      <ion-item class="settings-item">
+        <ion-icon name="moon-outline" slot="start" class="item-icon"></ion-icon>
+        <ion-label>Dark Mode</ion-label>
+        <ion-toggle slot="end" [checked]="darkMode" (ionChange)="onDarkToggle($event)"></ion-toggle>
+      </ion-item>
+      <ion-item button detail="false" class="settings-item" routerLink="/faq">
+        <ion-icon name="chatbubbles-outline" slot="start" class="item-icon"></ion-icon>
+        <ion-label>FAQ</ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end" class="chev"></ion-icon>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <ion-list class="settings-list logout-wrap" lines="none" *ngIf="user">
+    <ion-item button detail="false" class="settings-item logout-item" (click)="logout()">
+      <ion-icon name="log-out-outline" slot="start" class="logout-icon"></ion-icon>
+      <ion-label color="danger">Log out</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end" class="chev logout-chev"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+  <!-- Freelancer-only: CV & portfolio -->
+  <div class="freelancer-block" *ngIf="user?.role === 'freelancer'">
+    <h2 class="section-heading">Freelancer profile</h2>
+
+    <div class="notice" *ngIf="needsUpload">
+      <p>Upload a PDF CV to create your freelancer profile. You can edit bio, skills, and portfolio afterward.</p>
+      <input #cvInput type="file" accept="application/pdf" hidden (change)="onCvSelected($event)" />
+      <ion-button expand="block" color="dark" (click)="cvInput.click()" [disabled]="uploading">
+        <ion-spinner *ngIf="uploading" name="crescent" class="btn-spinner"></ion-spinner>
+        <span *ngIf="!uploading">Upload CV (PDF)</span>
+      </ion-button>
+    </div>
+
+    <div *ngIf="loadingFreelancer" class="pad">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <div class="form-block" *ngIf="!loadingFreelancer && !needsUpload">
+      <div class="cv-row" *ngIf="profileId">
+        <input #cvInput2 type="file" accept="application/pdf" hidden (change)="onCvSelected($event)" />
+        <ion-button fill="outline" size="small" (click)="cvInput2.click()" [disabled]="uploading">Replace CV</ion-button>
+      </div>
+
+      <ion-list lines="none" class="plain-list">
+        <ion-item class="field">
+          <ion-label position="stacked">Bio</ion-label>
+          <ion-textarea rows="5" [(ngModel)]="bio" placeholder="Tell clients about yourself"></ion-textarea>
+        </ion-item>
+
+        <ion-item class="field">
+          <ion-label position="stacked">Skills (comma-separated)</ion-label>
+          <ion-input [(ngModel)]="skillsInput" placeholder="e.g. UI Design, Figma, Angular"></ion-input>
+        </ion-item>
+      </ion-list>
+
+      <div class="portfolio-head">
+        <h3>Portfolio</h3>
+        <ion-button size="small" fill="clear" (click)="addPortfolioRow()">Add link</ion-button>
+      </div>
+
+      <div class="port-row" *ngFor="let row of portfolio; let i = index">
+        <ion-item class="field">
+          <ion-label position="stacked">Title</ion-label>
+          <ion-input [(ngModel)]="row.title" placeholder="Project title"></ion-input>
+        </ion-item>
+        <ion-item class="field">
+          <ion-label position="stacked">URL</ion-label>
+          <ion-input [(ngModel)]="row.url" type="url" placeholder="https://"></ion-input>
+        </ion-item>
+        <ion-button fill="clear" color="danger" size="small" *ngIf="portfolio.length > 1" (click)="removePortfolioRow(i)">
+          Remove
+        </ion-button>
+      </div>
+
+      <ion-button expand="block" color="dark" class="save-btn" (click)="saveFreelancer()" [disabled]="saving">
+        <ion-spinner *ngIf="saving" name="crescent" class="btn-spinner"></ion-spinner>
+        <span *ngIf="!saving">Save freelancer profile</span>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
+
+<!-- ng-template is required for ion-modal + Angular so inner content renders (see Ionic docs). -->
+<!-- Edit name -->
+<ion-modal [isOpen]="nameModalOpen" (didDismiss)="closeNameModal()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Edit name</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeNameModal()">Cancel</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding modal-body">
+      <ion-item lines="none" class="modal-field">
+        <ion-input label="Display name" labelPlacement="stacked" [(ngModel)]="editNameValue" maxlength="80"></ion-input>
+      </ion-item>
+      <ion-button expand="block" class="modal-save" (click)="saveName()">Save</ion-button>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- Change password -->
+<ion-modal [isOpen]="pwdModalOpen" (didDismiss)="closePwdModal()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Change password</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closePwdModal()">Cancel</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding modal-body">
+      <ion-item lines="none" class="modal-field">
+        <ion-input type="password" label="Current password" labelPlacement="stacked" [(ngModel)]="currentPwd" autocomplete="current-password"></ion-input>
+      </ion-item>
+      <ion-item lines="none" class="modal-field">
+        <ion-input type="password" label="New password" labelPlacement="stacked" [(ngModel)]="newPwd" autocomplete="new-password"></ion-input>
+      </ion-item>
+      <ion-item lines="none" class="modal-field">
+        <ion-input type="password" label="Confirm new password" labelPlacement="stacked" [(ngModel)]="confirmPwd" autocomplete="new-password"></ion-input>
+      </ion-item>
+      <ion-button expand="block" class="modal-save" (click)="savePassword()" [disabled]="savingPwd">
+        <ion-spinner *ngIf="savingPwd" name="crescent"></ion-spinner>
+        <span *ngIf="!savingPwd">Update password</span>
+      </ion-button>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- General infos (native date input avoids ion-datetime lazy-load spinner / blank sheet) -->
+<ion-modal [isOpen]="generalModalOpen" (didDismiss)="closeGeneralModal()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>General infos</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeGeneralModal()">Cancel</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding modal-body">
+      <ion-item lines="none" class="modal-field">
+        <ion-input type="tel" label="Phone number" labelPlacement="stacked" [(ngModel)]="phoneInput" placeholder="+216 …"></ion-input>
+      </ion-item>
+      <div class="native-date-wrap">
+        <label class="native-date-label" for="dob-input">Date of birth</label>
+        <input
+          id="dob-input"
+          class="native-date-input"
+          type="date"
+          [(ngModel)]="dobIso"
+          [max]="maxDob"
+        />
+      </div>
+      <ion-button expand="block" class="modal-save" (click)="saveGeneral()" [disabled]="savingGeneral">
+        <ion-spinner *ngIf="savingGeneral" name="crescent"></ion-spinner>
+        <span *ngIf="!savingGeneral">Save</span>
+      </ion-button>
+    </ion-content>
+  </ng-template>
+</ion-modal>

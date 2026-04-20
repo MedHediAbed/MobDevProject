@@ -1,0 +1,28 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Submit proposal</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-light" *ngIf="offerId">
+  <p class="hint">Offer ID: <strong>{{ offerId }}</strong></p>
+
+  <ion-list lines="none" class="plain-list">
+    <ion-item class="field">
+      <ion-label position="stacked">Amount (DT)</ion-label>
+      <ion-input type="number" [(ngModel)]="amount" placeholder="0"></ion-input>
+    </ion-item>
+    <ion-item class="field">
+      <ion-label position="stacked">Message</ion-label>
+      <ion-textarea rows="8" [(ngModel)]="message" placeholder="Introduce yourself and your plan"></ion-textarea>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" color="dark" class="save-btn" (click)="submit()" [disabled]="saving">
+    <ion-spinner *ngIf="saving" name="crescent" class="btn-spinner"></ion-spinner>
+    <span *ngIf="!saving">Submit proposal</span>
+  </ion-button>
+</ion-content>

@@ -1,0 +1,40 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/gigs" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ editId ? 'Edit gig' : 'Create gig' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-light">
+  <div class="pad" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="form-block" *ngIf="!loading">
+    <ion-list lines="none" class="plain-list">
+      <ion-item class="field">
+        <ion-label position="stacked">Title</ion-label>
+        <ion-input [(ngModel)]="title" placeholder="Service title"></ion-input>
+      </ion-item>
+      <ion-item class="field">
+        <ion-label position="stacked">Description</ion-label>
+        <ion-textarea rows="6" [(ngModel)]="description" placeholder="What will you deliver?"></ion-textarea>
+      </ion-item>
+      <ion-item class="field">
+        <ion-label position="stacked">Price (DT)</ion-label>
+        <ion-input type="number" [(ngModel)]="price" placeholder="0"></ion-input>
+      </ion-item>
+      <ion-item class="field">
+        <ion-label position="stacked">Tags (comma-separated)</ion-label>
+        <ion-input [(ngModel)]="tagsInput" placeholder="design, logo, branding"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="block" color="dark" class="save-btn" (click)="submit()" [disabled]="saving">
+      <ion-spinner *ngIf="saving" name="crescent" class="btn-spinner"></ion-spinner>
+      <span *ngIf="!saving">{{ editId ? 'Save changes' : 'Publish (pending review)' }}</span>
+    </ion-button>
+  </div>
+</ion-content>
