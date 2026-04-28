@@ -1,0 +1,65 @@
+.page-dark {
+  --background: #111111;
+  --color: #fff;
+}
+
+.section {
+  padding: 14px 12px 0;
+}
+
+.section h2 {
+  margin: 0 0 10px;
+  font-size: 17px;
+  color: #fff;
+}
+
+.item-card {
+  margin: 0 0 10px;
+  --background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+}
+
+.card-body {
+  padding: 12px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 15px;
+}
+
+p {
+  margin: 8px 0;
+  color: #aaa;
+}
+
+.price {
+  color: #7cb3ff;
+  font-weight: 700;
+}
+
+.meta {
+  color: #777;
+  font-size: 12px;
+}
+
+.pad {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.empty {
+  text-align: center;
+  color: #888;
+  padding: 20px;
+}

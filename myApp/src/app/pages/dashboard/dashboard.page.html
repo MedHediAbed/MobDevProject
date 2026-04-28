@@ -51,4 +51,16 @@
     </div>
   </div>
 
+  <div class="section">
+    <h2 class="section-title">Projects & Purchases</h2>
+    <div class="quick-actions">
+      <button class="quick-btn" (click)="goToOffers()">
+        {{ role === 'client' ? 'Manage project offers' : 'Browse client offers' }}
+      </button>
+      <button class="quick-btn" *ngIf="role === 'client'" (click)="goToPurchases()">
+        My purchases
+      </button>
+    </div>
+  </div>
+
 </ion-content>

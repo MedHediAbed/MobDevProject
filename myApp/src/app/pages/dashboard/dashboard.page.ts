@@ -64,6 +64,10 @@ export class DashboardPage implements OnInit {
 
   ngOnInit() {}
 
+  get role() {
+    return this.authService.currentUser?.role;
+  }
+
   async logout() {
     await this.authService.logout();
   }
@@ -77,5 +81,13 @@ export class DashboardPage implements OnInit {
       return;
     }
     this.router.navigate(['/gigs/category', slug]);
+  }
+
+  goToOffers() {
+    this.router.navigate(['/offers']);
+  }
+
+  goToPurchases() {
+    this.router.navigate(['/purchases']);
   }
 }

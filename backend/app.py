@@ -23,7 +23,7 @@ import requests as http_requests  # pip install requests
 
 app = Flask(__name__)
 
-app.config["MONGO_URI"] = "MONGODB_URI=mongodb+srv://aabedmedhedi_db_user:DPC6u9ZW7QPiG71p@cluster0.xxxxx.mongodb.net/YourDBName"
+app.config["MONGO_URI"] = "mongodb+srv://mehdibessrour4_db_user:kbbRGOw379UJzTpU@cluster0.pwc1nxy.mongodb.net/freelancehub?retryWrites=true&w=majority"
 app.config["JWT_SECRET_KEY"] = "super-secret-key-change-later"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=2)
 
@@ -224,6 +224,21 @@ def merge_offre_doc(o):
         "datePublication": json_dt(o.get("datePublication")),
         "clientId": str(cid) if cid is not None else None,
     }
+
+
+def merge_achat_doc(a):
+    cid = a.get("clientId")
+    pid = a.get("produitId")
+    out = {
+        "_id": str(a["_id"]),
+        "clientId": str(cid) if cid is not None else None,
+        "produitId": str(pid) if pid is not None else None,
+        "dateAchat": json_dt(a.get("dateAchat")),
+    }
+    produit = a.get("_produit")
+    if produit:
+        out["produit"] = produit
+    return out
 
 
 def ensure_freelancer_profile_for_user(user_oid):
@@ -1053,6 +1068,7 @@ def delete_produit(id):
 # ----------------------------
 
 @app.route("/api/achats", methods=["POST"])
+@app.route("/api/purchases", methods=["POST"])
 @jwt_required()
 def create_achat():
     claims = get_jwt()
@@ -1080,6 +1096,32 @@ def create_achat():
         "_id": str(ins.inserted_id),
     }), 201
 
+
+@app.route("/api/achats/by-user/<userId>", methods=["GET"])
+@app.route("/api/purchases/by-user/<userId>", methods=["GET"])
+@jwt_required()
+def list_achats_by_user(userId):
+    requester = get_jwt_identity()
+    claims = get_jwt()
+    if requester != userId and claims.get("role") != "admin":
+        return jsonify({"error": "Forbidden"}), 403
+
+    user_oid = parse_object_id(userId, "userId")
+    if not user_oid:
+        return jsonify({"error": "Invalid userId"}), 400
+
+    rows = list(mongo.db.achats.find({"clientId": user_oid}).sort("dateAchat", -1))
+    out = []
+    for a in rows:
+        produit_oid = a.get("produitId")
+        produit = mongo.db.produits.find_one({"_id": produit_oid}) if produit_oid else None
+        if produit:
+            foid = parse_object_id(produit.get("freelancerId"))
+            fu = mongo.db.users.find_one({"_id": foid}) if foid else None
+            a["_produit"] = merge_produit_doc(produit, fu)
+        out.append(merge_achat_doc(a))
+    return jsonify({"purchases": out}), 200
+
 # ----------------------------
 # OFFRES (CRUD — clients)
 # ----------------------------
@@ -1099,6 +1141,7 @@ def _parse_date_publication(val):
 
 
 @app.route("/api/offres", methods=["POST"])
+@app.route("/api/offers", methods=["POST"])
 @jwt_required()
 def create_offre():
     claims = get_jwt()
@@ -1149,12 +1192,14 @@ def create_offre():
 
 
 @app.route("/api/offres", methods=["GET"])
+@app.route("/api/offers", methods=["GET"])
 def list_offres():
     rows = list(mongo.db.offres.find().sort("datePublication", -1))
     return jsonify({"offres": [merge_offre_doc(o) for o in rows]}), 200
 
 
 @app.route("/api/offres/<id>", methods=["GET"])
+@app.route("/api/offers/<id>", methods=["GET"])
 def get_offre(id):
     oid = parse_object_id(id)
     if not oid:
@@ -1166,6 +1211,7 @@ def get_offre(id):
 
 
 @app.route("/api/offres/<id>", methods=["PUT"])
+@app.route("/api/offers/<id>", methods=["PUT"])
 @jwt_required()
 def update_offre(id):
     claims = get_jwt()
@@ -1220,6 +1266,7 @@ def update_offre(id):
 
 
 @app.route("/api/offres/<id>", methods=["DELETE"])
+@app.route("/api/offers/<id>", methods=["DELETE"])
 @jwt_required()
 def delete_offre(id):
     claims = get_jwt()

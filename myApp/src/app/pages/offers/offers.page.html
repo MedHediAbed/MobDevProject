@@ -1,0 +1,73 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Client offers</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-dark">
+  <div class="form-wrap" *ngIf="isClient">
+    <h3>{{ editingId ? 'Edit project offer' : 'Create project offer' }}</h3>
+    <ion-list lines="none" class="plain-list">
+      <ion-item class="field">
+        <ion-label position="stacked">Title</ion-label>
+        <ion-input [(ngModel)]="titre" placeholder="Need a mobile app UI"></ion-input>
+      </ion-item>
+      <ion-item class="field">
+        <ion-label position="stacked">Description</ion-label>
+        <ion-textarea [(ngModel)]="description" rows="4" placeholder="Describe the project scope..."></ion-textarea>
+      </ion-item>
+      <ion-item class="field">
+        <ion-label position="stacked">Budget (DT)</ion-label>
+        <ion-input [(ngModel)]="budget" type="number"></ion-input>
+      </ion-item>
+      <ion-item class="field">
+        <ion-label position="stacked">Delay (days)</ion-label>
+        <ion-input [(ngModel)]="delai" type="number"></ion-input>
+      </ion-item>
+    </ion-list>
+    <div class="row-btns">
+      <ion-button expand="block" color="dark" (click)="submit()" [disabled]="saving">
+        {{ editingId ? 'Save changes' : 'Publish offer' }}
+      </ion-button>
+      <ion-button *ngIf="editingId" expand="block" fill="outline" color="medium" (click)="clearForm()">
+        Cancel
+      </ion-button>
+    </div>
+  </div>
+
+  <div class="pad" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="card-list" *ngIf="!loading">
+    <ion-card *ngFor="let o of offers" class="offer-card">
+      <div class="card-main" [routerLink]="['/offers', o._id]">
+        <div class="card-top">
+          <h2>{{ o.titre }}</h2>
+          <span class="budget">{{ o.budget | number : '1.0-2' }} DT</span>
+        </div>
+        <p class="desc">{{ o.description }}</p>
+        <p class="meta">Delay: {{ o.delai }} days</p>
+      </div>
+      <div class="actions" *ngIf="canManage(o)">
+        <ion-button size="small" fill="outline" color="medium" (click)="startEdit(o)">Edit</ion-button>
+        <ion-button
+          size="small"
+          fill="solid"
+          color="danger"
+          (click)="remove(o)"
+          [disabled]="deletingId === o._id"
+        >
+          Delete
+        </ion-button>
+      </div>
+    </ion-card>
+  </div>
+
+  <div class="empty" *ngIf="!loading && offers.length === 0">
+    <p>No offers available yet.</p>
+  </div>
+</ion-content>

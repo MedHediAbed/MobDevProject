@@ -1,0 +1,51 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Purchases</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-dark">
+  <div class="section">
+    <h2>Available products</h2>
+    <div class="pad" *ngIf="loadingProducts">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+    <ion-card class="item-card" *ngFor="let p of produits">
+      <div class="card-body">
+        <div class="top">
+          <h3>{{ p.nom }}</h3>
+          <span class="price">{{ p.prix | number : '1.0-2' }} DT</span>
+        </div>
+        <p>{{ p.description }}</p>
+        <ion-button
+          size="small"
+          color="dark"
+          (click)="buy(p._id)"
+          [disabled]="buyingProductId === p._id"
+        >
+          Buy
+        </ion-button>
+      </div>
+    </ion-card>
+  </div>
+
+  <div class="section">
+    <h2>My purchases</h2>
+    <div class="pad" *ngIf="loadingPurchases">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+    <ion-card class="item-card" *ngFor="let purchase of purchases">
+      <div class="card-body">
+        <h3>{{ purchase.produit?.nom || purchase.produitId }}</h3>
+        <p *ngIf="purchase.produit">Price: {{ purchase.produit.prix | number : '1.0-2' }} DT</p>
+        <p class="meta">{{ purchase.dateAchat | date : 'medium' }}</p>
+      </div>
+    </ion-card>
+    <div class="empty" *ngIf="!loadingPurchases && purchases.length === 0">
+      <p>No purchases yet.</p>
+    </div>
+  </div>
+</ion-content>

@@ -185,3 +185,20 @@
   background-size: cover;
   background-position: center;
 }
+
+.quick-actions {
+  display: grid;
+  gap: 10px;
+  padding-bottom: 20px;
+}
+
+.quick-btn {
+  border: 1px solid #2a2a2a;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 12px;
+  padding: 13px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+}
