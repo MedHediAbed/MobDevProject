@@ -1,0 +1,48 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Marketplace</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-market">
+  <section class="hero">
+    <h1>Hardware, AI &amp; knowledge</h1>
+    <p>Static preview — electronic kits, model subscriptions, and IT articles in one place.</p>
+  </section>
+
+  <section class="block">
+    <h2>Electronic kits</h2>
+    <ion-card *ngFor="let k of kits" class="tile">
+      <ion-card-header>
+        <ion-card-title>{{ k.title }}</ion-card-title>
+        <ion-card-subtitle>{{ k.price }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>{{ k.blurb }}</ion-card-content>
+    </ion-card>
+  </section>
+
+  <section class="block">
+    <h2>AI model subscriptions</h2>
+    <ion-card *ngFor="let a of aiSubs" class="tile">
+      <ion-card-header>
+        <ion-card-title>{{ a.title }}</ion-card-title>
+        <ion-card-subtitle>{{ a.price }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>{{ a.blurb }}</ion-card-content>
+    </ion-card>
+  </section>
+
+  <section class="block block--last">
+    <h2>IT articles &amp; guides</h2>
+    <ion-card *ngFor="let ar of articles" class="tile">
+      <ion-card-header>
+        <ion-card-title>{{ ar.title }}</ion-card-title>
+        <ion-card-subtitle>{{ ar.price }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>{{ ar.blurb }}</ion-card-content>
+    </ion-card>
+  </section>
+</ion-content>

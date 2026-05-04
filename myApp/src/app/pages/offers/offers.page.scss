@@ -1,6 +1,7 @@
 .page-dark {
   --background: #111111;
   --color: #fff;
+  --padding-bottom: calc(56px + env(safe-area-inset-bottom) + 56px);
 }
 
 .form-wrap {
@@ -34,7 +35,7 @@
 }
 
 .card-list {
-  padding: 8px 12px 24px;
+  padding: 8px 12px calc(32px + env(safe-area-inset-bottom));
 }
 
 .offer-card {

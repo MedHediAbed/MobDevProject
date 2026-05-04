@@ -55,7 +55,7 @@ export class SubmitProposalPage implements OnInit {
         next: async () => {
           this.saving = false;
           await this.toast('Proposal sent.', 'success');
-          this.router.navigate(['/my-proposals']);
+          this.router.navigate(['/conversations']);
         },
         error: async (err) => {
           this.saving = false;

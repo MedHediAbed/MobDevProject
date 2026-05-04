@@ -1,0 +1,92 @@
+.page-dark {
+  --background: #0d0d0d;
+  --color: #fff;
+  --padding-bottom: 88px;
+}
+
+.banner {
+  padding: 12px 14px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #2a2a2a;
+  font-size: 12px;
+  color: #aaa;
+
+  strong {
+    color: #fff;
+  }
+
+  p {
+    margin: 4px 0;
+  }
+}
+
+.thread {
+  padding: 12px 10px 24px;
+}
+
+.bubble-wrap {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+
+  &.mine {
+    justify-content: flex-end;
+
+    .bubble {
+      background: #1e3a5f;
+      border-color: #2d4a72;
+    }
+  }
+}
+
+.bubble {
+  max-width: 88%;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 14px;
+  padding: 8px 12px;
+}
+
+.who {
+  font-size: 11px;
+  color: #7cb3ff;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.body {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #eee;
+}
+
+.when {
+  font-size: 10px;
+  color: #666;
+  display: block;
+  margin-top: 6px;
+}
+
+.composer-footer ion-toolbar {
+  --padding-start: 8px;
+  --padding-end: 4px;
+  align-items: flex-end;
+}
+
+.composer-input {
+  flex: 1;
+  --background: #1a1a1a;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  border-radius: 12px;
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.pad {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}

@@ -1,0 +1,64 @@
+.page-market {
+  --background: #0f1115;
+  --color: #e8eaef;
+  --padding-bottom: calc(96px + env(safe-area-inset-bottom));
+}
+
+.hero {
+  padding: 20px 18px 8px;
+
+  h1 {
+    margin: 0 0 8px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.45;
+    color: #9aa3b2;
+  }
+}
+
+.block {
+  padding: 8px 14px 4px;
+
+  h2 {
+    margin: 16px 0 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #c5ccd8;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  &--last {
+    padding-bottom: 28px;
+  }
+}
+
+.tile {
+  margin: 0 0 12px;
+  --background: #1a1f2a;
+  border: 1px solid #2a3142;
+  border-radius: 14px;
+  box-shadow: none;
+
+  ion-card-title {
+    font-size: 17px;
+    color: #fff;
+  }
+
+  ion-card-subtitle {
+    color: #7cb3ff;
+    font-weight: 700;
+  }
+
+  ion-card-content {
+    color: #aeb6c5;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+}

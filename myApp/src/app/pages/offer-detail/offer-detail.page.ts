@@ -47,6 +47,14 @@ export class OfferDetailPage implements OnInit {
     return !!this.offer && this.auth.currentUser?.role === 'freelancer';
   }
 
+  get canReviewProposals(): boolean {
+    return (
+      !!this.offer &&
+      this.auth.currentUser?.role === 'client' &&
+      this.auth.currentUser?.id === this.offer.clientId
+    );
+  }
+
   private async toast(message: string) {
     const t = await this.toastCtrl.create({ message, duration: 2200, color: 'danger', position: 'top' });
     await t.present();

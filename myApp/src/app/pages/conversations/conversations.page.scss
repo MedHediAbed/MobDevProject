@@ -1,0 +1,46 @@
+.page-dark {
+  --background: #111;
+  --color: #fff;
+  --padding-bottom: calc(64px + env(safe-area-inset-bottom) + 56px);
+}
+
+.hint {
+  margin: 12px 14px;
+  font-size: 12px;
+  color: #888;
+  line-height: 1.4;
+}
+
+.pad {
+  display: flex;
+  justify-content: center;
+  padding: 32px;
+}
+
+.dark-list {
+  padding: 0 8px calc(28px + env(safe-area-inset-bottom));
+}
+
+.dark-item {
+  --background: #1a1a1a;
+  --border-color: #2a2a2a;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  --color: #fff;
+}
+
+.offer {
+  color: #aaa !important;
+  font-size: 13px !important;
+}
+
+.meta {
+  color: #666 !important;
+  font-size: 11px !important;
+}
+
+.empty {
+  text-align: center;
+  color: #888;
+  padding: 32px 20px;
+}

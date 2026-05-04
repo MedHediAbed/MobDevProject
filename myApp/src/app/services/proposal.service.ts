@@ -3,15 +3,26 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+export interface AnonymousFreelancerProfile {
+  displayName: string;
+  jobSuccessRate: number;
+  onTimeDeliveryRate: number;
+  avgRating: number;
+  completedProjects: number;
+  memberSince?: string | null;
+}
+
 export interface Proposal {
   _id: string;
   offerId: string;
-  freelancerId: string;
+  freelancerId?: string;
   amount: number;
   message: string;
   status: 'pending' | 'accepted' | 'rejected';
   createdAt?: string;
   freelancerNom?: string;
+  anonymousFreelancer?: AnonymousFreelancerProfile;
+  conversationId?: string;
 }
 
 export interface ProposalListResponse {
@@ -36,6 +47,7 @@ export interface UpdateProposalStatusPayload {
 export interface UpdateProposalStatusResponse {
   message: string;
   proposal: Proposal;
+  conversationId?: string;
 }
 
 @Injectable({ providedIn: 'root' })

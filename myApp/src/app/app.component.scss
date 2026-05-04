@@ -34,8 +34,9 @@
   }
 }
 
+/* Bottom nav is fixed; ensure scrollable pages can reach content above it (+ breathing room). */
 ion-app.has-bottom-nav {
   ion-content {
-    --padding-bottom: calc(56px + env(safe-area-inset-bottom));
+    --padding-bottom: calc(72px + env(safe-area-inset-bottom) + 64px);
   }
 }

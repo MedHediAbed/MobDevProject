@@ -1,0 +1,30 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Messages</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-dark">
+  <p class="hint">Anonymous chat — you appear with a generated name. Do not share personal contact details.</p>
+
+  <div class="pad" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!loading" lines="none" class="dark-list">
+    <ion-item *ngFor="let c of items" button [routerLink]="['/conversations', c._id]" detail="true" class="dark-item">
+      <ion-label>
+        <h2>{{ c.otherPartyAlias }}</h2>
+        <p class="offer">{{ c.offerTitle }}</p>
+        <p class="meta" *ngIf="c.createdAt">{{ c.createdAt }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div class="empty" *ngIf="!loading && items.length === 0">
+    <p>No conversations yet. When a client accepts your proposal, a thread opens here.</p>
+  </div>
+</ion-content>

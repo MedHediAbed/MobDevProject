@@ -63,4 +63,42 @@
     </div>
   </div>
 
+  <div class="section" *ngIf="role === 'client'">
+    <h2 class="section-title">Your offers & proposals</h2>
+    <p class="section-hint">Review freelancer proposals anonymously — no real names are shown.</p>
+    <div class="pad-inline" *ngIf="offersLoading">
+      <ion-spinner name="crescent" color="light"></ion-spinner>
+    </div>
+    <div class="offer-dash-list" *ngIf="!offersLoading && myOffers.length">
+      <div class="offer-dash-row" *ngFor="let o of myOffers">
+        <div class="offer-dash-text">
+          <strong>{{ o.titre }}</strong>
+          <span>{{ o.budget | number : '1.0-0' }} DT · {{ o.delai }} days</span>
+        </div>
+        <a class="offer-dash-link" [routerLink]="['/offers', o._id, 'proposals']">Proposals</a>
+      </div>
+    </div>
+    <p class="empty-inline" *ngIf="!offersLoading && !myOffers.length">You have no published offers yet. Use “Manage project offers” to create one.</p>
+  </div>
+
+  <div class="section" *ngIf="role === 'freelancer'">
+    <h2 class="section-title">Notifications</h2>
+    <div class="pad-inline" *ngIf="notifLoading">
+      <ion-spinner name="crescent" color="light"></ion-spinner>
+    </div>
+    <div class="notif-list" *ngIf="!notifLoading && notifications.length">
+      <button type="button" class="notif-row" *ngFor="let n of notifications" (click)="openNotification(n)">
+        <span class="dot" *ngIf="!n.read"></span>
+        <div class="notif-body">
+          <strong>{{ n.title }}</strong>
+          <p>{{ n.body }}</p>
+        </div>
+      </button>
+    </div>
+    <p class="empty-inline" *ngIf="!notifLoading && !notifications.length">No notifications yet.</p>
+  </div>
+
+  <!-- Scroll past fixed bottom nav so last sections (e.g. notifications) stay fully visible -->
+  <div class="dash-bottom-spacer" aria-hidden="true"></div>
+
 </ion-content>

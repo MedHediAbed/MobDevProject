@@ -1,0 +1,83 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/offers" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Proposals</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="goMessages()">Messages</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-dark">
+  <div class="pad" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="wrap" *ngIf="!loading && offer">
+    <h1 class="title">{{ offer.titre }}</h1>
+    <p class="sub">Freelancers are shown anonymously. No email or real name is displayed.</p>
+
+    <ion-card *ngFor="let p of proposals" class="prop-card">
+      <ion-card-content>
+        <div class="row-top">
+          <span class="badge" [class.badge--ok]="p.status === 'accepted'" [class.badge--no]="p.status === 'rejected'">
+            {{ p.status }}
+          </span>
+          <span class="amt">{{ p.amount | number : '1.0-2' }} DT</span>
+        </div>
+
+        <div class="anon" *ngIf="p.anonymousFreelancer">
+          <h3>{{ p.anonymousFreelancer.displayName }}</h3>
+          <div class="metrics">
+            <div><span>Job success</span><strong>{{ p.anonymousFreelancer.jobSuccessRate }}%</strong></div>
+            <div><span>On-time delivery</span><strong>{{ p.anonymousFreelancer.onTimeDeliveryRate }}%</strong></div>
+            <div><span>Avg. rating</span><strong>{{ p.anonymousFreelancer.avgRating }} / 5</strong></div>
+            <div><span>Completed projects</span><strong>{{ p.anonymousFreelancer.completedProjects }}</strong></div>
+          </div>
+          <p class="since" *ngIf="p.anonymousFreelancer.memberSince">Member since: {{ p.anonymousFreelancer.memberSince }}</p>
+        </div>
+
+        <div class="msg-block">
+          <h4>Proposal message</h4>
+          <p>{{ p.message }}</p>
+        </div>
+
+        <div class="actions" *ngIf="p.status === 'pending'">
+          <ion-button
+            size="small"
+            color="success"
+            (click)="confirm('accepted', p)"
+            [disabled]="busyId === p._id"
+          >
+            Accept
+          </ion-button>
+          <ion-button
+            size="small"
+            color="medium"
+            fill="outline"
+            (click)="confirm('rejected', p)"
+            [disabled]="busyId === p._id"
+          >
+            Reject
+          </ion-button>
+        </div>
+
+        <ion-button
+          *ngIf="p.status === 'accepted' && p.conversationId"
+          size="small"
+          expand="block"
+          fill="outline"
+          [routerLink]="['/conversations', p.conversationId]"
+        >
+          Open anonymous conversation
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="empty" *ngIf="proposals.length === 0">
+      <p>No proposals yet for this offer.</p>
+    </div>
+  </div>
+</ion-content>

@@ -53,12 +53,23 @@
         <p class="meta">Delay: {{ o.delai }} days</p>
       </div>
       <div class="actions" *ngIf="canManage(o)">
-        <ion-button size="small" fill="outline" color="medium" (click)="startEdit(o)">Edit</ion-button>
+        <ion-button
+          size="small"
+          fill="solid"
+          color="primary"
+          [routerLink]="['/offers', o._id, 'proposals']"
+          (click)="$event.stopPropagation()"
+        >
+          Proposals
+        </ion-button>
+        <ion-button size="small" fill="outline" color="medium" (click)="$event.stopPropagation(); startEdit(o)">
+          Edit
+        </ion-button>
         <ion-button
           size="small"
           fill="solid"
           color="danger"
-          (click)="remove(o)"
+          (click)="$event.stopPropagation(); remove(o)"
           [disabled]="deletingId === o._id"
         >
           Delete

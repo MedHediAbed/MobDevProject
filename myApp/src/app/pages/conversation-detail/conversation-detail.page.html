@@ -1,0 +1,46 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/conversations" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ detail?.offerTitle || 'Chat' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-dark">
+  <div class="pad" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading && detail">
+    <div class="banner">
+      <p>You are <strong>{{ detail.yourAlias }}</strong></p>
+      <p>Chatting with <strong>{{ detail.otherPartyAlias }}</strong></p>
+    </div>
+
+    <div class="thread">
+      <div *ngFor="let m of messages" class="bubble-wrap" [class.mine]="m.isMine">
+        <div class="bubble">
+          <span class="who">{{ labelFor(m) }}</span>
+          <p class="body">{{ m.body }}</p>
+          <span class="when" *ngIf="m.createdAt">{{ m.createdAt }}</span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ion-content>
+
+<ion-footer class="composer-footer" *ngIf="!loading && detail">
+  <ion-toolbar color="dark">
+    <ion-textarea
+      class="composer-input"
+      [(ngModel)]="draft"
+      rows="2"
+      placeholder="Write a message…"
+      autoGrow="true"
+    ></ion-textarea>
+    <ion-buttons slot="end">
+      <ion-button (click)="send()" [disabled]="sending || !draft.trim()">Send</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

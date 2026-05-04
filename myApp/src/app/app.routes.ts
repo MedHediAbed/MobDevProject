@@ -4,7 +4,7 @@ import { AuthGuard } from './guards/auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
@@ -17,6 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
+    canActivate: [AuthGuard],
     loadComponent: () => import('./pages/dashboard/dashboard.page').then(m => m.DashboardPage)
   },
   {
@@ -46,6 +47,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/proposal-detail/proposal-detail.page').then(m => m.ProposalDetailPage)
   },
   {
+    path: 'marketplace',
+    loadComponent: () => import('./pages/marketplace/marketplace.page').then(m => m.MarketplacePage)
+  },
+  {
     path: 'gigs',
     loadComponent: () => import('./pages/gig-list/gig-list.page').then(m => m.GigListPage)
   },
@@ -60,8 +65,8 @@ export const routes: Routes = [
   },
   {
     path: 'my-proposals',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./pages/proposal-list/proposal-list.page').then(m => m.ProposalListPage)
+    redirectTo: 'conversations',
+    pathMatch: 'full'
   },
   {
     path: 'submit-proposal/:offerId',
@@ -70,11 +75,28 @@ export const routes: Routes = [
   },
   {
     path: 'offers',
+    canActivate: [AuthGuard],
     loadComponent: () => import('./pages/offers/offers.page').then(m => m.OffersPage)
   },
   {
     path: 'offers/:id',
+    canActivate: [AuthGuard],
     loadComponent: () => import('./pages/offer-detail/offer-detail.page').then(m => m.OfferDetailPage)
+  },
+  {
+    path: 'offers/:offerId/proposals',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./pages/offer-proposals/offer-proposals.page').then(m => m.OfferProposalsPage)
+  },
+  {
+    path: 'conversations',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./pages/conversations/conversations.page').then(m => m.ConversationsPage)
+  },
+  {
+    path: 'conversations/:id',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./pages/conversation-detail/conversation-detail.page').then(m => m.ConversationDetailPage)
   },
   {
     path: 'purchases',
@@ -83,6 +105,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'dashboard'
+    redirectTo: 'login'
   }
 ];

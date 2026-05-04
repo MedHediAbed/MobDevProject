@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
+import { Offer, OfferService } from '../../services/offer.service';
+import { ConversationService, NotificationItem } from '../../services/conversation.service';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule]
+  imports: [CommonModule, IonicModule, RouterModule]
 })
 export class DashboardPage implements OnInit {
 
@@ -57,12 +59,66 @@ export class DashboardPage implements OnInit {
     }
   ];
 
+  myOffers: Offer[] = [];
+  offersLoading = false;
+  notifications: NotificationItem[] = [];
+  notifLoading = false;
+
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private offerService: OfferService,
+    private conversationService: ConversationService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.role === 'client') {
+      this.loadMyOffers();
+    }
+    if (this.role === 'freelancer') {
+      this.loadNotifications();
+    }
+  }
+
+  loadMyOffers() {
+    const uid = this.authService.currentUser?.id;
+    if (!uid) return;
+    this.offersLoading = true;
+    this.offerService.listOffers().subscribe({
+      next: (res) => {
+        const all = res.offres || [];
+        this.myOffers = all.filter((o) => o.clientId === uid);
+        this.offersLoading = false;
+      },
+      error: () => {
+        this.offersLoading = false;
+      },
+    });
+  }
+
+  loadNotifications() {
+    this.notifLoading = true;
+    this.conversationService.listNotifications().subscribe({
+      next: (res) => {
+        this.notifications = (res.notifications || []).slice(0, 8);
+        this.notifLoading = false;
+      },
+      error: () => {
+        this.notifLoading = false;
+      },
+    });
+  }
+
+  openNotification(n: NotificationItem) {
+    if (!n.read) {
+      this.conversationService.markNotificationRead(n._id).subscribe({ error: () => undefined });
+    }
+    if (n.conversationId) {
+      this.router.navigate(['/conversations', n.conversationId]);
+    } else {
+      this.router.navigate(['/conversations']);
+    }
+  }
 
   get role() {
     return this.authService.currentUser?.role;

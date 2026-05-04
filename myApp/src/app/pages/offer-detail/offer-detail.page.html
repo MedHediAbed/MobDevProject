@@ -30,5 +30,9 @@
     <ion-button *ngIf="canSubmitProposal" expand="block" color="dark" [routerLink]="['/submit-proposal', offer._id]">
       Submit proposal
     </ion-button>
+
+    <ion-button *ngIf="canReviewProposals" expand="block" color="primary" [routerLink]="['/offers', offer._id, 'proposals']">
+      View proposals (anonymous)
+    </ion-button>
   </div>
 </ion-content>

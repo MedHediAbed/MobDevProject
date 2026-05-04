@@ -3,6 +3,15 @@
 .dashboard-content {
   --background: #111111;
   --color: #ffffff;
+  /* Tab bar (~56px) + safe area + extra margin so content never sits under the nav */
+  --padding-bottom: calc(72px + env(safe-area-inset-bottom) + 40px);
+}
+
+.dash-bottom-spacer {
+  height: calc(64px + env(safe-area-inset-bottom) + 56px);
+  min-height: calc(64px + env(safe-area-inset-bottom) + 56px);
+  flex-shrink: 0;
+  pointer-events: none;
 }
 
 // ── Header ──
@@ -201,4 +210,109 @@
   text-align: left;
   font-weight: 600;
   font-size: 14px;
+}
+
+.section-hint {
+  margin: -6px 20px 12px;
+  font-size: 12px;
+  color: #888;
+  line-height: 1.4;
+}
+
+.pad-inline {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+.offer-dash-list {
+  padding: 0 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.offer-dash-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+}
+
+.offer-dash-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #ccc;
+  font-size: 12px;
+
+  strong {
+    color: #fff;
+    font-size: 14px;
+  }
+}
+
+.offer-dash-link {
+  flex-shrink: 0;
+  color: #7cb3ff;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.empty-inline {
+  margin: 0 20px 12px;
+  font-size: 13px;
+  color: #777;
+}
+
+.notif-list {
+  padding: 0 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notif-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+  padding: 12px 14px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3b82f6;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.notif-body {
+  flex: 1;
+
+  strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.35;
+  }
 }

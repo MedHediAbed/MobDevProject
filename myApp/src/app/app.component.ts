@@ -36,15 +36,15 @@ export class AppComponent {
     this.router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd)).subscribe(syncNav);
   }
 
-  isNavActive(tab: 'home' | 'gigs' | 'chat' | 'profile'): boolean {
+  isNavActive(tab: 'home' | 'marketplace' | 'chat' | 'profile'): boolean {
     const u = this.router.url.split('?')[0];
     switch (tab) {
       case 'home':
         return u === '/dashboard';
-      case 'gigs':
-        return u.startsWith('/gigs') || u.startsWith('/create-gig') || u.startsWith('/proposals');
+      case 'marketplace':
+        return u.startsWith('/marketplace');
       case 'chat':
-        return u.startsWith('/my-proposals') || u.startsWith('/submit-proposal');
+        return u.startsWith('/conversations');
       case 'profile':
         return u.startsWith('/edit-profile') || u.startsWith('/freelancers') || u.startsWith('/faq');
       default:
