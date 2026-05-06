@@ -1,0 +1,44 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Review submissions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-light">
+  <div class="pad" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <p class="empty" *ngIf="!loading && !items.length">No pending deliverables.</p>
+
+  <div class="card" *ngFor="let row of items">
+    <h3>{{ row.offerTitle || 'Project' }}</h3>
+    <p class="meta">Freelancer: {{ row.proposal.freelancerNom || '—' }} · {{ row.proposal.amount | number : '1.0-0' }} DT</p>
+    <div class="deliverable">
+      <strong>Submission</strong>
+      <p *ngIf="row.proposal.deliverableText">{{ row.proposal.deliverableText }}</p>
+      <p *ngIf="!row.proposal.deliverableText" class="muted">(No text — see ZIP if attached.)</p>
+      <a
+        *ngIf="row.proposal.deliverableZipUrl"
+        class="zip-link"
+        [href]="apiOrigin + '/' + row.proposal.deliverableZipUrl"
+        target="_blank"
+        rel="noopener"
+      >
+        Download ZIP{{ row.proposal.deliverableZipOriginalName ? ' (' + row.proposal.deliverableZipOriginalName + ')' : '' }}
+      </a>
+    </div>
+    <ion-button
+      expand="block"
+      color="success"
+      (click)="validate(row)"
+      [disabled]="busyId === row.proposal._id"
+    >
+      <ion-spinner *ngIf="busyId === row.proposal._id" name="crescent"></ion-spinner>
+      <span *ngIf="busyId !== row.proposal._id">Validate &amp; notify client</span>
+    </ion-button>
+  </div>
+</ion-content>

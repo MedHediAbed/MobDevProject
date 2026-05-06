@@ -1,0 +1,60 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Submit work</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-light">
+  <div class="pad" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="pad" *ngIf="!loading && errorMessage">
+    <p class="err">{{ errorMessage }}</p>
+    <ion-button expand="block" routerLink="/dashboard" color="dark">Back to dashboard</ion-button>
+  </div>
+
+  <ng-container *ngIf="!loading && !errorMessage && proposalId">
+    <p class="hint" *ngIf="offerTitle">
+      Project: <strong>{{ offerTitle }}</strong>
+    </p>
+    <p class="hint subtle">
+      Describe what you delivered and optionally attach a ZIP. An admin will review before the client pays.
+    </p>
+
+    <div
+      class="drop-zone"
+      [class.drop-zone--active]="dragActive"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+    >
+      <ion-icon name="cloud-upload-outline" class="drop-icon"></ion-icon>
+      <p class="drop-title">Drop your .zip here</p>
+      <p class="drop-sub">or</p>
+      <label class="file-pick">
+        <input type="file" accept=".zip,application/zip" (change)="onFilePick($event)" />
+        <span>Browse files</span>
+      </label>
+      <div class="zip-pill" *ngIf="zipName">
+        <span>{{ zipName }}</span>
+        <button type="button" class="zip-clear" (click)="clearZip()" aria-label="Remove file">×</button>
+      </div>
+    </div>
+
+    <ion-list lines="none" class="plain-list">
+      <ion-item class="field">
+        <ion-label position="stacked">Deliverables (text)</ion-label>
+        <ion-textarea rows="8" [(ngModel)]="deliverableText" placeholder="Summary, links, notes (optional if you attach a ZIP)"></ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="block" color="dark" class="save-btn" (click)="submit()" [disabled]="saving">
+      <ion-spinner *ngIf="saving" name="crescent" class="btn-spinner"></ion-spinner>
+      <span *ngIf="!saving">Submit for review</span>
+    </ion-button>
+  </ng-container>
+</ion-content>

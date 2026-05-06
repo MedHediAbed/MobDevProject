@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -72,6 +73,21 @@ export const routes: Routes = [
     path: 'submit-proposal/:offerId',
     canActivate: [AuthGuard],
     loadComponent: () => import('./pages/submit-proposal/submit-proposal.page').then(m => m.SubmitProposalPage)
+  },
+  {
+    path: 'submit-work/:proposalId',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./pages/submit-work/submit-work.page').then(m => m.SubmitWorkPage)
+  },
+  {
+    path: 'payout/:proposalId',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./pages/payout/payout.page').then(m => m.PayoutPage)
+  },
+  {
+    path: 'admin/deliverables',
+    canActivate: [AuthGuard, AdminGuard],
+    loadComponent: () => import('./pages/admin-deliverables/admin-deliverables.page').then(m => m.AdminDeliverablesPage)
   },
   {
     path: 'offers',

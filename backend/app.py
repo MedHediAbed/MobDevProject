@@ -32,6 +32,29 @@ mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
+# Demo admin (login: email "admin" or this address, password "admin")
+DEFAULT_ADMIN_EMAIL = "admin@freelancehub.local"
+
+
+def ensure_default_admin():
+    try:
+        if mongo.db.users.find_one({"email": DEFAULT_ADMIN_EMAIL}):
+            return
+        hashed_password = bcrypt.generate_password_hash("admin").decode("utf-8")
+        doc = {
+            "nom": "Administrator",
+            "email": DEFAULT_ADMIN_EMAIL,
+            "password": hashed_password,
+            "role": "admin",
+            "statut": "active",
+            "provider": "local",
+            "dateCreation": datetime.utcnow(),
+        }
+        ins = mongo.db.users.insert_one(doc)
+        sync_admins_row(ins.inserted_id)
+    except Exception as exc:
+        print("ensure_default_admin:", exc)
+
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -193,6 +216,23 @@ def merge_proposal_doc(prop, freelancer_user):
     }
     if freelancer_user:
         out["freelancerNom"] = user_nom(freelancer_user)
+    js = prop.get("jobStatus")
+    if js:
+        out["jobStatus"] = js
+    dtxt = prop.get("deliverableText")
+    if dtxt is not None:
+        out["deliverableText"] = dtxt
+    dz = prop.get("deliverableZipUrl")
+    if dz:
+        out["deliverableZipUrl"] = dz
+    dzo = prop.get("deliverableZipOriginalName")
+    if dzo:
+        out["deliverableZipOriginalName"] = dzo
+    out["submittedAt"] = json_dt(prop.get("submittedAt"))
+    av = prop.get("adminValidated")
+    if av is not None:
+        out["adminValidated"] = bool(av)
+    out["adminValidatedAt"] = json_dt(prop.get("adminValidatedAt"))
     return out
 
 
@@ -259,6 +299,10 @@ def merge_proposal_doc_client_view(prop, freelancer_user):
     pout = merge_proposal_doc(prop, None)
     pout.pop("freelancerNom", None)
     pout.pop("freelancerId", None)
+    pout.pop("deliverableText", None)
+    pout.pop("submittedAt", None)
+    pout.pop("deliverableZipUrl", None)
+    pout.pop("deliverableZipOriginalName", None)
     pid = pout.get("_id")
     pout["anonymousFreelancer"] = anonymous_freelancer_profile_for_client(pid, freelancer_user)
     conv = mongo.db.conversations.find_one({"proposalId": pid})
@@ -430,6 +474,8 @@ def login():
 
     if not email or not password:
         return jsonify({"error": "Email and password required"}), 400
+    if email == "admin":
+        email = DEFAULT_ADMIN_EMAIL
 
     user = mongo.db.users.find_one({"email": email})
 
@@ -1508,9 +1554,20 @@ def update_proposal_status(id):
     if statut not in ("accepted", "rejected"):
         return jsonify({"error": "statut must be accepted or rejected"}), 400
 
-    mongo.db.proposals.update_one({"_id": oid}, {"$set": {"statut": statut}})
+    if statut == "accepted":
+        mongo.db.proposals.update_one(
+            {"_id": oid},
+            {"$set": {"statut": statut, "jobStatus": "in_progress"}},
+        )
+    else:
+        mongo.db.proposals.update_one({"_id": oid}, {"$set": {"statut": statut}})
 
     conversation_id_str = None
+    prop_pid = str(oid)
+    fid_str = str(prop.get("freelancerId") or "")
+    offer_id_str = str(offre_oid)
+    offer_title = (offre.get("titre") or "Project")[:200]
+
     if statut == "accepted":
         oid_key = prop.get("offreId") or prop.get("offerId")
         mongo.db.proposals.update_many(
@@ -1521,14 +1578,10 @@ def update_proposal_status(id):
             {"$set": {"statut": "rejected"}},
         )
 
-        prop_pid = str(oid)
         existing_conv = mongo.db.conversations.find_one({"proposalId": prop_pid})
         if not existing_conv:
-            fid_str = str(prop.get("freelancerId") or "")
-            offer_id_str = str(offre_oid)
             client_alias = client_display_alias(offer_id_str, prop_pid, user_id)
             freelancer_alias = freelancer_display_alias(prop_pid, fid_str)
-            offer_title = (offre.get("titre") or "Project")[:200]
             doc_conv = {
                 "offerId": offer_id_str,
                 "proposalId": prop_pid,
@@ -1541,22 +1594,38 @@ def update_proposal_status(id):
             }
             ins_c = mongo.db.conversations.insert_one(doc_conv)
             conversation_id_str = str(ins_c.inserted_id)
-            mongo.db.notifications.insert_one({
-                "userId": fid_str,
-                "type": "proposal_accepted",
-                "title": "Proposal accepted",
-                "body": (
-                    f'Your proposal for "{offer_title}" was accepted. '
-                    "Open Messages to chat using your anonymous name."
-                ),
-                "proposalId": prop_pid,
-                "offerId": offer_id_str,
-                "conversationId": conversation_id_str,
-                "read": False,
-                "createdAt": datetime.utcnow(),
-            })
         else:
             conversation_id_str = str(existing_conv["_id"])
+
+        mongo.db.notifications.insert_one({
+            "userId": fid_str,
+            "type": "submit_work",
+            "title": "Proposal accepted — submit your work",
+            "body": (
+                f'"{offer_title}" is in progress. '
+                "Tap here to submit your deliverables for admin review. You can still use Messages to chat."
+            ),
+            "proposalId": prop_pid,
+            "offerId": offer_id_str,
+            "conversationId": conversation_id_str,
+            "route": f"/submit-work/{prop_pid}",
+            "read": False,
+            "createdAt": datetime.utcnow(),
+        })
+        mongo.db.notifications.insert_one({
+            "userId": user_id,
+            "type": "project_in_progress",
+            "title": "Project in progress",
+            "body": (
+                f'You accepted a proposal for "{offer_title}". '
+                "The freelancer will submit work for validation. We will notify you when it is time to pay."
+            ),
+            "proposalId": prop_pid,
+            "offerId": offer_id_str,
+            "conversationId": conversation_id_str,
+            "read": False,
+            "createdAt": datetime.utcnow(),
+        })
 
     updated = mongo.db.proposals.find_one({"_id": oid})
     ff = parse_object_id(updated.get("freelancerId"))
@@ -1568,6 +1637,229 @@ def update_proposal_status(id):
     if statut == "accepted" and conversation_id_str:
         resp["conversationId"] = conversation_id_str
     return jsonify(resp), 200
+
+
+@app.route("/api/proposals/<id>", methods=["GET"])
+@jwt_required()
+def get_proposal_detail(id):
+    claims = get_jwt()
+    role = claims.get("role")
+    uid = get_jwt_identity()
+    oid = parse_object_id(id)
+    if not oid:
+        return jsonify({"error": "Invalid proposal id"}), 400
+    prop = mongo.db.proposals.find_one({"_id": oid})
+    if not prop:
+        return jsonify({"error": "Proposal not found"}), 404
+    oid_raw = prop.get("offreId") or prop.get("offerId")
+    offre_oid = parse_object_id(oid_raw)
+    if not offre_oid:
+        return jsonify({"error": "Invalid related offre"}), 400
+    offre = mongo.db.offres.find_one({"_id": offre_oid})
+    if not offre:
+        return jsonify({"error": "Offre not found"}), 404
+    client_id = str(offre.get("clientId"))
+    freelancer_id = str(prop.get("freelancerId") or "")
+    if role != "admin" and uid != client_id and uid != freelancer_id:
+        return jsonify({"error": "Forbidden"}), 403
+    ff = parse_object_id(prop.get("freelancerId"))
+    fu = mongo.db.users.find_one({"_id": ff}) if ff else None
+    out = merge_proposal_doc(prop, fu)
+    out["offerTitle"] = offre.get("titre") or ""
+    return jsonify(out), 200
+
+
+@app.route("/api/proposals/<id>/submit-work", methods=["POST"])
+@jwt_required()
+def submit_proposal_work(id):
+    claims = get_jwt()
+    if claims.get("role") != "freelancer":
+        return jsonify({"error": "Freelancer role required"}), 403
+    uid = get_jwt_identity()
+    oid = parse_object_id(id)
+    if not oid:
+        return jsonify({"error": "Invalid proposal id"}), 400
+    prop = mongo.db.proposals.find_one({"_id": oid})
+    if not prop:
+        return jsonify({"error": "Proposal not found"}), 404
+    if str(prop.get("freelancerId") or "") != uid:
+        return jsonify({"error": "Forbidden"}), 403
+    if prop.get("statut") != "accepted":
+        return jsonify({"error": "Proposal must be accepted"}), 400
+    if prop.get("adminValidated"):
+        return jsonify({"error": "This job is already validated"}), 400
+
+    text = ""
+    zip_url = None
+    zip_original = None
+
+    ct = (request.content_type or "").lower()
+    if "multipart/form-data" in ct:
+        text = (request.form.get("deliverableText") or "").strip()
+        up = request.files.get("file")
+        if up and up.filename:
+            raw_name = secure_filename(up.filename)
+            ext = os.path.splitext(raw_name)[1].lower()
+            if ext != ".zip":
+                return jsonify({"error": "Only .zip files are allowed"}), 400
+            stored = f"deliverable_{str(oid)}_{int(datetime.utcnow().timestamp())}.zip"
+            path = os.path.join(UPLOAD_FOLDER, stored)
+            up.save(path)
+            zip_url = f"uploads/{stored}"
+            zip_original = raw_name or "deliverable.zip"
+    else:
+        data = request.get_json(silent=True) or {}
+        text = (data.get("deliverableText") or data.get("body") or "").strip()
+
+    if not text and not zip_url:
+        return jsonify({"error": "Add a description and/or attach a .zip file"}), 400
+
+    set_doc = {
+        "deliverableText": text,
+        "submittedAt": datetime.utcnow(),
+        "jobStatus": "pending_review",
+    }
+    if zip_url:
+        set_doc["deliverableZipUrl"] = zip_url
+        set_doc["deliverableZipOriginalName"] = zip_original
+    else:
+        set_doc["deliverableZipUrl"] = None
+        set_doc["deliverableZipOriginalName"] = None
+
+    mongo.db.proposals.update_one({"_id": oid}, {"$set": set_doc})
+    updated = mongo.db.proposals.find_one({"_id": oid})
+    fu = mongo.db.users.find_one({"_id": parse_object_id(uid)})
+    return jsonify({
+        "message": "Work submitted",
+        "proposal": merge_proposal_doc(updated, fu),
+    }), 200
+
+
+@app.route("/api/admin/deliverables", methods=["GET"])
+@jwt_required()
+def admin_list_deliverables():
+    if get_jwt().get("role") != "admin":
+        return jsonify({"error": "Admin role required"}), 403
+    cur = mongo.db.proposals.find({
+        "statut": "accepted",
+        "$and": [
+            {
+                "$or": [
+                    {"deliverableText": {"$exists": True, "$nin": ["", None]}},
+                    {"deliverableZipUrl": {"$exists": True, "$nin": ["", None]}},
+                ],
+            },
+            {"$or": [{"adminValidated": False}, {"adminValidated": {"$exists": False}}]},
+        ],
+    }).sort("submittedAt", -1)
+    out = []
+    for p in cur:
+        oid_raw = p.get("offreId") or p.get("offerId")
+        ooid = parse_object_id(oid_raw)
+        offre = mongo.db.offres.find_one({"_id": ooid}) if ooid else None
+        fid = p.get("freelancerId")
+        foid = parse_object_id(fid) if fid else None
+        fu = mongo.db.users.find_one({"_id": foid}) if foid else None
+        out.append({
+            "proposal": merge_proposal_doc(p, fu),
+            "offerTitle": (offre or {}).get("titre") or "",
+        })
+    return jsonify({"items": out}), 200
+
+
+@app.route("/api/proposals/<id>/admin-validate", methods=["POST"])
+@jwt_required()
+def admin_validate_deliverable(id):
+    if get_jwt().get("role") != "admin":
+        return jsonify({"error": "Admin role required"}), 403
+    oid = parse_object_id(id)
+    if not oid:
+        return jsonify({"error": "Invalid proposal id"}), 400
+    prop = mongo.db.proposals.find_one({"_id": oid})
+    if not prop:
+        return jsonify({"error": "Proposal not found"}), 404
+    has_text = bool((prop.get("deliverableText") or "").strip())
+    has_zip = bool(prop.get("deliverableZipUrl"))
+    if not has_text and not has_zip:
+        return jsonify({"error": "No deliverable submitted"}), 400
+    if prop.get("adminValidated"):
+        return jsonify({"error": "Already validated"}), 400
+    oid_raw = prop.get("offreId") or prop.get("offerId")
+    offre_oid = parse_object_id(oid_raw)
+    offre = mongo.db.offres.find_one({"_id": offre_oid}) if offre_oid else None
+    if not offre:
+        return jsonify({"error": "Offre not found"}), 404
+    client_id = str(offre.get("clientId"))
+    offer_title = (offre.get("titre") or "Project")[:200]
+    prop_pid = str(oid)
+    offer_id_str = str(offre_oid)
+    mongo.db.proposals.update_one(
+        {"_id": oid},
+        {"$set": {
+            "adminValidated": True,
+            "jobStatus": "approved_for_payment",
+            "adminValidatedAt": datetime.utcnow(),
+        }},
+    )
+    mongo.db.notifications.delete_many({
+        "userId": client_id,
+        "proposalId": prop_pid,
+        "type": "project_in_progress",
+    })
+    mongo.db.notifications.insert_one({
+        "userId": client_id,
+        "type": "payment_due",
+        "title": "Work approved — time to pay",
+        "body": (
+            f'Admin validated the deliverables for "{offer_title}". '
+            "Complete your payment to close this project."
+        ),
+        "proposalId": prop_pid,
+        "offerId": offer_id_str,
+        "route": f"/payout/{prop_pid}",
+        "read": False,
+        "createdAt": datetime.utcnow(),
+    })
+    updated = mongo.db.proposals.find_one({"_id": oid})
+    ff = parse_object_id(updated.get("freelancerId"))
+    fu = mongo.db.users.find_one({"_id": ff}) if ff else None
+    return jsonify({
+        "message": "Deliverable validated; client notified",
+        "proposal": merge_proposal_doc(updated, fu),
+    }), 200
+
+
+@app.route("/api/proposals/<id>/ack-mvp-payment", methods=["POST"])
+@jwt_required()
+def ack_mvp_payment(id):
+    """MVP: after fake checkout, remove payment_due notifications for this proposal."""
+    if get_jwt().get("role") != "client":
+        return jsonify({"error": "Client role required"}), 403
+    uid = get_jwt_identity()
+    oid = parse_object_id(id)
+    if not oid:
+        return jsonify({"error": "Invalid proposal id"}), 400
+    prop = mongo.db.proposals.find_one({"_id": oid})
+    if not prop:
+        return jsonify({"error": "Proposal not found"}), 404
+    oid_raw = prop.get("offreId") or prop.get("offerId")
+    offre_oid = parse_object_id(oid_raw)
+    offre = mongo.db.offres.find_one({"_id": offre_oid}) if offre_oid else None
+    if not offre:
+        return jsonify({"error": "Offre not found"}), 404
+    if str(offre.get("clientId")) != uid:
+        return jsonify({"error": "Forbidden"}), 403
+    prop_pid = str(oid)
+    mongo.db.notifications.delete_many({
+        "userId": uid,
+        "proposalId": prop_pid,
+        "type": "payment_due",
+    })
+    mongo.db.proposals.update_one(
+        {"_id": oid},
+        {"$set": {"jobStatus": "paid", "mvpPaymentAckAt": datetime.utcnow()}},
+    )
+    return jsonify({"message": "ok"}), 200
 
 
 # ----------------------------
@@ -1594,6 +1886,7 @@ def list_notifications():
             "proposalId": n.get("proposalId"),
             "offerId": n.get("offerId"),
             "conversationId": n.get("conversationId"),
+            "route": n.get("route"),
             "createdAt": json_dt(n.get("createdAt")),
         })
     return jsonify({"notifications": out}), 200
@@ -1776,4 +2069,6 @@ def missing_token_callback(error):
 # ----------------------------
 
 if __name__ == "__main__":
+    with app.app_context():
+        ensure_default_admin()
     app.run(debug=True, host="0.0.0.0", port=5000)

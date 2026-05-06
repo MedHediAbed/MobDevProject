@@ -23,6 +23,14 @@ export interface Proposal {
   freelancerNom?: string;
   anonymousFreelancer?: AnonymousFreelancerProfile;
   conversationId?: string;
+  jobStatus?: string;
+  deliverableText?: string;
+  deliverableZipUrl?: string | null;
+  deliverableZipOriginalName?: string | null;
+  submittedAt?: string;
+  adminValidated?: boolean;
+  adminValidatedAt?: string;
+  offerTitle?: string;
 }
 
 export interface ProposalListResponse {
@@ -50,9 +58,15 @@ export interface UpdateProposalStatusResponse {
   conversationId?: string;
 }
 
+export interface AdminDeliverableRow {
+  proposal: Proposal;
+  offerTitle: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProposalService {
   private readonly API_URL = 'http://127.0.0.1:5000/api/proposals';
+  private readonly API_BASE = 'http://127.0.0.1:5000/api';
 
   constructor(private http: HttpClient) {}
 
@@ -75,6 +89,48 @@ export class ProposalService {
   updateProposalStatus(id: string, body: UpdateProposalStatusPayload): Observable<UpdateProposalStatusResponse> {
     return this.http
       .put<UpdateProposalStatusResponse>(`${this.API_URL}/${id}/status`, body)
+      .pipe(catchError(this.handleError));
+  }
+
+  getProposal(id: string): Observable<Proposal> {
+    return this.http.get<Proposal>(`${this.API_URL}/${id}`).pipe(catchError(this.handleError));
+  }
+
+  submitWork(
+    proposalId: string,
+    deliverableText: string,
+    zipFile?: File | null
+  ): Observable<{ message: string; proposal: Proposal }> {
+    if (zipFile) {
+      const fd = new FormData();
+      fd.append('deliverableText', deliverableText || '');
+      fd.append('file', zipFile, zipFile.name);
+      return this.http
+        .post<{ message: string; proposal: Proposal }>(`${this.API_URL}/${proposalId}/submit-work`, fd)
+        .pipe(catchError(this.handleError));
+    }
+    return this.http
+      .post<{ message: string; proposal: Proposal }>(`${this.API_URL}/${proposalId}/submit-work`, {
+        deliverableText,
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  ackMvpPayment(proposalId: string): Observable<{ message: string }> {
+    return this.http
+      .post<{ message: string }>(`${this.API_URL}/${proposalId}/ack-mvp-payment`, {})
+      .pipe(catchError(this.handleError));
+  }
+
+  adminListDeliverables(): Observable<{ items: AdminDeliverableRow[] }> {
+    return this.http
+      .get<{ items: AdminDeliverableRow[] }>(`${this.API_BASE}/admin/deliverables`)
+      .pipe(catchError(this.handleError));
+  }
+
+  adminValidateProposal(proposalId: string): Observable<{ message: string; proposal: Proposal }> {
+    return this.http
+      .post<{ message: string; proposal: Proposal }>(`${this.API_URL}/${proposalId}/admin-validate`, {})
       .pipe(catchError(this.handleError));
   }
 

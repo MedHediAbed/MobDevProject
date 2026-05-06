@@ -1,0 +1,67 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pay freelancer</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-light">
+  <div class="pad" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="pad" *ngIf="!loading && errorMessage">
+    <p class="err">{{ errorMessage }}</p>
+    <ion-button expand="block" routerLink="/dashboard" color="dark">Back</ion-button>
+  </div>
+
+  <ng-container *ngIf="!loading && !errorMessage && proposalId">
+    <div class="success-overlay" *ngIf="showSuccess">
+      <div class="success-burst" aria-hidden="true"></div>
+      <div class="check-wrap" [class.check-wrap--animate]="showSuccess">
+        <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+      </div>
+      <p class="success-title">Payment done</p>
+      <p class="success-sub">Thank you — this was a demo checkout.</p>
+    </div>
+
+    <div class="summary" *ngIf="!showSuccess">
+      <h2>{{ offerTitle || 'Project' }}</h2>
+      <p class="amount-line">Total <strong>{{ amount | number : '1.0-0' }} DT</strong></p>
+      <p class="demo-note">MVP: no real charge — card data is not sent anywhere.</p>
+    </div>
+
+    <ion-list lines="none" class="plain-list" *ngIf="!showSuccess">
+      <ion-item class="field">
+        <ion-label position="stacked">Name on card</ion-label>
+        <ion-input [(ngModel)]="cardName" autocomplete="cc-name"></ion-input>
+      </ion-item>
+      <ion-item class="field">
+        <ion-label position="stacked">Card number</ion-label>
+        <ion-input [(ngModel)]="cardNumber" inputmode="numeric" maxlength="19" placeholder="4242 4242 4242 4242"></ion-input>
+      </ion-item>
+      <ion-item class="field field--half">
+        <ion-label position="stacked">Expiry</ion-label>
+        <ion-input [(ngModel)]="expiry" placeholder="MM/YY"></ion-input>
+      </ion-item>
+      <ion-item class="field field--half">
+        <ion-label position="stacked">CVC</ion-label>
+        <ion-input [(ngModel)]="cvc" type="password" maxlength="4"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <ion-button
+      *ngIf="!showSuccess"
+      expand="block"
+      color="dark"
+      class="pay-btn"
+      (click)="pay()"
+      [disabled]="paying"
+    >
+      <ion-spinner *ngIf="paying" name="crescent" class="btn-spinner"></ion-spinner>
+      <span *ngIf="!paying">Pay {{ amount | number : '1.0-0' }} DT</span>
+    </ion-button>
+  </ng-container>
+</ion-content>

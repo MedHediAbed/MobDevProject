@@ -1,0 +1,118 @@
+.page-light {
+  --background: #f7f7f7;
+}
+
+.pad {
+  padding: 24px 16px;
+}
+
+.hint {
+  padding: 16px 20px 0;
+  color: #333;
+  font-size: 14px;
+
+  &.subtle {
+    color: #666;
+    font-size: 13px;
+    padding-top: 8px;
+  }
+}
+
+.err {
+  color: #c00;
+  margin-bottom: 16px;
+}
+
+.plain-list {
+  background: transparent;
+}
+
+.field {
+  --background: #fff;
+  --border-radius: 10px;
+  margin: 8px 16px;
+  border: 1px solid #e8e8e8;
+}
+
+.save-btn {
+  margin: 24px 16px 0;
+  --border-radius: 10px;
+}
+
+.btn-spinner {
+  width: 22px;
+  height: 22px;
+}
+
+.drop-zone {
+  margin: 12px 16px 8px;
+  padding: 24px 16px;
+  border: 2px dashed #c8c8c8;
+  border-radius: 12px;
+  background: #fff;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &--active {
+    border-color: #3880ff;
+    background: #f0f5ff;
+  }
+}
+
+.drop-icon {
+  font-size: 40px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.drop-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 15px;
+  color: #333;
+}
+
+.drop-sub {
+  margin: 8px 0;
+  font-size: 13px;
+  color: #888;
+}
+
+.file-pick {
+  display: inline-block;
+  cursor: pointer;
+  margin-top: 4px;
+
+  input[type='file'] {
+    display: none;
+  }
+
+  span {
+    color: #3880ff;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: underline;
+  }
+}
+
+.zip-pill {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #eef7ee;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1a5c1a;
+}
+
+.zip-clear {
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}

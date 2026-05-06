@@ -40,6 +40,8 @@ export interface NotificationItem {
   proposalId?: string;
   offerId?: string;
   conversationId?: string;
+  /** Deep link path e.g. /submit-work/:id */
+  route?: string;
   createdAt?: string;
 }
 

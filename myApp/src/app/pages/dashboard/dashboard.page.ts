@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-import { AuthService } from '../../services/auth.service';
+import { filter } from 'rxjs/operators';
+import { AuthService, User } from '../../services/auth.service';
 import { Offer, OfferService } from '../../services/offer.service';
 import { ConversationService, NotificationItem } from '../../services/conversation.service';
 
@@ -68,14 +70,34 @@ export class DashboardPage implements OnInit {
     private authService: AuthService,
     private router: Router,
     private offerService: OfferService,
-    private conversationService: ConversationService
-  ) {}
+    private conversationService: ConversationService,
+    private destroyRef: DestroyRef
+  ) {
+    // currentUser is restored from Ionic Storage asynchronously; ngOnInit often ran too early.
+    this.authService.currentUser$
+      .pipe(
+        filter((u): u is User => u != null),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((user) => {
+        if (user.role === 'client') {
+          this.loadMyOffers();
+        }
+        if (user.role === 'client' || user.role === 'freelancer') {
+          this.loadNotifications();
+        }
+      });
+  }
 
-  ngOnInit() {
-    if (this.role === 'client') {
+  ngOnInit() {}
+
+  /** Refresh when returning to Home so new notifications show without a full reload. */
+  ionViewWillEnter() {
+    const u = this.authService.currentUser;
+    if (u?.role === 'client') {
       this.loadMyOffers();
     }
-    if (this.role === 'freelancer') {
+    if (u?.role === 'client' || u?.role === 'freelancer') {
       this.loadNotifications();
     }
   }
@@ -113,11 +135,27 @@ export class DashboardPage implements OnInit {
     if (!n.read) {
       this.conversationService.markNotificationRead(n._id).subscribe({ error: () => undefined });
     }
+    if (n.route) {
+      this.router.navigateByUrl(n.route);
+      return;
+    }
+    if (n.type === 'payment_due' && n.proposalId) {
+      this.router.navigate(['/payout', n.proposalId]);
+      return;
+    }
+    if (n.type === 'submit_work' && n.proposalId) {
+      this.router.navigate(['/submit-work', n.proposalId]);
+      return;
+    }
     if (n.conversationId) {
       this.router.navigate(['/conversations', n.conversationId]);
     } else {
       this.router.navigate(['/conversations']);
     }
+  }
+
+  goAdminDeliverables() {
+    this.router.navigate(['/admin/deliverables']);
   }
 
   get role() {

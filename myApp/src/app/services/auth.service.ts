@@ -9,7 +9,7 @@ export interface User {
   id: string;
   nom: string;
   email: string;
-  role: 'freelancer' | 'client';
+  role: 'freelancer' | 'client' | 'admin';
   statut?: string;
   dateCreation?: string;
   telephone?: string;
@@ -111,8 +111,9 @@ export class AuthService {
   }
 
   login(payload: LoginPayload): Observable<AuthResponse> {
+    const emailRaw = payload.email.trim().toLowerCase();
     const body = {
-      email: payload.email.trim().toLowerCase(),
+      email: emailRaw === 'admin' ? 'admin@freelancehub.local' : emailRaw,
       password: payload.password,
     };
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, body).pipe(

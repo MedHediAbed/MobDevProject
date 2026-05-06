@@ -77,7 +77,7 @@ export class OfferProposalsPage implements OnInit {
     const title = status === 'accepted' ? 'Accept proposal?' : 'Reject proposal?';
     const message =
       status === 'accepted'
-        ? 'Other proposals for this offer will be rejected. The freelancer will be notified and an anonymous chat will open.'
+        ? 'Other proposals will be rejected. The freelancer is notified to submit work for admin review; your project moves to in progress.'
         : 'The freelancer will see this proposal as rejected.';
 
     const alert = await this.alertCtrl.create({
@@ -104,8 +104,9 @@ export class OfferProposalsPage implements OnInit {
         this.loadProposals();
         if (status === 'accepted' && res.conversationId) {
           const a = await this.alertCtrl.create({
-            header: 'Open conversation?',
-            message: 'Chat with your partner using anonymous names only.',
+            header: 'Project in progress',
+            message:
+              'Your freelancer will submit work for admin review. You will get a notification when it is time to pay. You can open messages anytime to chat anonymously.',
             buttons: [
               { text: 'Later', role: 'cancel' },
               {
